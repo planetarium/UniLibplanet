@@ -44,5 +44,5 @@ sysinfo.txt
 .vscode/
 .sln.DotSettins
 
-# Dlls
-/Assets/Plugins/*
+# Libplanet Dlls
+/Assets/Plugins/Libplanet*
