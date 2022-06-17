@@ -341,6 +341,136 @@ As can be seen in the comments above, most of the code above is to automate
 serialization and deserialization.  Pay special attention to the `Execute()`
 method where the main logic of the action resides.
 
+
+## Script `Game.cs`
+
+```csharp
+using System.Collections.Generic;
+using Libplanet.Action;
+using Libplanet.Blockchain.Renderers;
+using Libplanet.Unity;
+using Scripts.Actions;
+using Scripts.States;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+
+namespace Scripts
+{
+    // Unity event handler.
+    public class CountUpdatedEvent : UnityEvent<CountState>
+    {
+    }
+
+    public class Game : MonoBehaviour
+    {
+        // Determines how often clicks are collected.
+        public const float TxProcessInterval = 3.0f;
+
+        // Connected to UI elements.
+        public Text TotalCountText;
+        public Text AddressText;
+        public Click click;
+
+        // Internal timer.
+        private float _timer;
+
+        private CountUpdatedEvent _countUpdatedEvent;
+        private IEnumerable<IRenderer<PolymorphicAction<ActionBase>>> _renderers;
+        private Agent _agent;
+
+        // Unity MonoBehaviour Awake().
+        public void Awake()
+        {
+            // General application settings.
+            Screen.SetResolution(800, 600, FullScreenMode.Windowed);
+            Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.ScriptOnly);
+
+            // Register a listener.
+            _countUpdatedEvent = new CountUpdatedEvent();
+            _countUpdatedEvent.AddListener(UpdateTotalCountText);
+
+            // Renderers are called when certain conditions are met.
+            // There are different types of renderers called under different conditions.
+            // Some are called when a new block is added, some are called when an action is executed.
+            _renderers = new List<IRenderer<PolymorphicAction<ActionBase>>>()
+            {
+                new AnonymousActionRenderer<PolymorphicAction<ActionBase>>()
+                {
+                    ActionRenderer = (action, context, nextStates) =>
+                    {
+                        // Invoke the event handler only if the state is updated.
+                        if (nextStates.GetState(context.Signer) is Bencodex.Types.Dictionary bdict)
+                        {
+                            Agent.Instance.RunOnMainThread(() =>
+                            {
+                                _countUpdatedEvent.Invoke(new CountState(bdict));
+                            });
+                        }
+                    }
+                }
+            };
+
+            // Initialize a Libplanet Unity Agent.
+            Agent.Initialize(_renderers);
+            _agent = Agent.Instance;
+        }
+
+        // Unity MonoBehaviour Start().
+        public void Start()
+        {
+            // Initialize the timer.
+            _timer = TxProcessInterval;
+
+            // Initialize texts.
+            AddressText.text = $"My Address: {_agent.Address.ToHex().Substring(0, 4)}";
+            Bencodex.Types.IValue initialState = _agent.GetState(Agent.Instance.Address);
+            if (initialState is Bencodex.Types.Dictionary bdict)
+            {
+                _countUpdatedEvent.Invoke(new CountState(bdict));
+            }
+            else
+            {
+                _countUpdatedEvent.Invoke(new CountState(0L));
+            }
+        }
+
+        // Unity MonoBehaviour FixedUpdate().
+        public void FixedUpdate()
+        {
+            // If the timer has not reached zero, keep counting down.
+            if (_timer > 0)
+            {
+                _timer -= Time.deltaTime;
+            }
+            // Else, count the number of clicks so far and create a transaction
+            // containing an action with the click count.
+            // Afterwards, resets the timer and the count.
+            else
+            {
+                if (click.Count > 0)
+                {
+                    List<ActionBase> actions = new List<ActionBase>()
+                    {
+                        new ClickAction(click.Count)
+                    };
+                    Agent.Instance.MakeTransaction(actions);
+                }
+
+                _timer = TxProcessInterval;
+                click.ResetCount();
+            }
+        }
+
+        // Updates total count text.
+        private void UpdateTotalCountText(CountState countState)
+        {
+            TotalCountText.text = $"Total Count: {countState.Count}";
+        }
+    }
+}
+```
+
 <!-- footnotes -->
 
 ----
