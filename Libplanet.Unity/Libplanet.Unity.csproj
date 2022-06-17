@@ -69,19 +69,21 @@
     <ProjectReference Include="..\libplanet\Libplanet.Net\Libplanet.Net.csproj" />
     <ProjectReference Include="..\libplanet\Libplanet\Libplanet.csproj" />
   </ItemGroup>
-
+  
+  <!-- Fixed in 2021 version -->
+  <Import Project="..\.env.xml"></Import>
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>.\UnityReference\UnityEngine.dll</HintPath>
+        <HintPath>$(UNITY_ENGINE_DIR)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>.\UnityReference\UnityEngine.CoreModule.dll</HintPath>
+        <HintPath>$(UNITY_ENGINE_DIR)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>.\UnityReference\UnityEditor.dll</HintPath>
+        <HintPath>$(UNITY_ENGINE_DIR)\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.CoreModule">
-      <HintPath>.\UnityReference\UnityEditor.CoreModule.dll</HintPath>
+        <HintPath>$(UNITY_ENGINE_DIR)\UnityEditor.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   
