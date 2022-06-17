@@ -42,3 +42,6 @@ xunit.runner.console.*/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# env
+.env.xml
