@@ -38,7 +38,7 @@ do {
     }
 } while ($TARGET_PATH -eq "null")
 
-$UNITY_ENGINE_DIR = "$TARGET_PATH\Data\Managed\UnityEngine\"
+$UNITY_ENGINE_DIR = "$TARGET_PATH\Data\Managed\UnityEngine"
 
 $xml_value = "<Project>
 `t<PropertyGroup>
