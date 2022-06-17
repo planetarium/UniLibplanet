@@ -4,10 +4,10 @@ This tutorial will walk you through creating a basic blockchain application
 called Clicker.  Users will be able to do the following:
 
 - Run a local blockchain node.
-- Create transactions containing `Click` actions.
+- Create transactions containing `ClickAction` actions.
 - Have blocks mined containing transactions, if any[^1].
 - Have mined blocks added to the local blockchain.
-- Update the UI counting the total number of clicks once `Click` actions
+- Update the UI counting the total number of clicks once `ClickAction` actions
   are evaluated by the local blockchain.
 
 
@@ -46,7 +46,7 @@ using `Create genesis block`, `Create swarm config`, and `Create private key`
 under `Tools` → `Libplanet`.
 
 
-## States and Actions
+## Actions and States
 
 Three componenets are needed to create an action for a [Libplanet] blockchain
 to consume:
@@ -66,7 +66,7 @@ changes the game state by writing the output of the action to a stored state.
 
 In both cases, data is encoded in [Bencodex] format.
 
-### `CountState`
+### State `CountState`
 
 In order to store the total number of clicks for a player, we essentially
 wrap `long` inside a class called `CountState` that inherits `DataModel`.
@@ -77,7 +77,7 @@ with the following content.
 using Libplanet.Store;
 using Scripts.Data;
 
-namespace Scripts.State
+namespace Scripts.States
 {
     public class CountState : DataModel
     {
@@ -90,7 +90,8 @@ namespace Scripts.State
             Count = count;
         }
 
-        // Used for deserializing stored state.
+        // Used for deserializing a stored state.
+        // This must be declared as base constructor cannot be inherited.
         public CountState(Bencodex.Types.Dictionary encoded)
             : base(encoded)
         {
@@ -108,6 +109,114 @@ namespace Scripts.State
 As all data recorded on blockchain and the state storage in [Bencodex] format,
 the `DataModel` class is there to help with all the heavy lifting of encoding
 and decoding behind the scenes.
+
+### Plain value `ClickActionPlainValue`
+
+In order to store the number of clicks for an action, its arguments should also
+be encoded in [Bencodex] format.  For this purpose, similar to `CountState`,
+we need to wrap `long` inside a class called `ClickActionPlainValue`.
+Create a new file named `ClickActionPlainValue.cs` under
+`Assets/Scripts/Actions/` with the following content.
+
+```csharp
+using Libplanet.Store;
+
+namespace Scripts.Actions
+{
+    public class ClickActionPlainValue : DataModel
+    {
+        public long Count { get; private set; }
+
+        public AddCountPlainValue(long count)
+            : base()
+        {
+            Count = count;
+        }
+
+        // Used for deserializing stored action.
+        public AddCountPlainValue(Bencodex.Types.Dictionary encoded)
+            : base(encoded)
+        {
+        }
+    }
+}
+```
+
+Although there doesn't seem to be much of a difference between `CountState`
+and `ClickActionPlainValue` classes, the two have completely different
+uses and it is **highly advisable** to have these to be separate.
+
+### Action `ClickAction`
+
+Now create a file named `ClickAction.cs` under `Assets/Scripts/Actions`
+with the following content for `ClickAction` action.
+
+```csharp
+using System;
+using Libplanet.Action;
+using Libplanet.Unity;
+using Scripts.State;
+using UnityEngine;
+
+namespace Scripts.Actions
+{
+    // Used for reflection when deserializing a stored action.
+    [ActionType("click_action")]
+    public class ClickAction : ActionBase
+    {
+        private ClickActionPlainValue _plainValue;
+
+        // Used for reflection when deserializing a stored action.
+        public ClickAction()
+        {
+        }
+
+        // Used for creating a new action.
+        public ClickAction(long count)
+        {
+            _plainValue = new ClickActionPlainValue(count);
+        }
+
+        // Used for serialzing an action.
+        public override Bencodex.Types.IValue PlainValue => _plainValue.Encode();
+
+        // Used for deserializing a stored action.
+        public override void LoadPlainValue(Bencodex.Types.IValue plainValue)
+        {
+            if (plainValue is Bencodex.Types.Dictionary bdict)
+            {
+                _plainValue = new AddCountPlainValue(bdict);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid {nameof(plainValue)} type: {plainValue.GetType()}");
+            }
+        }
+
+        // Executes an action.
+        // This is what gets called when a block containing an action is mined or appended to a blockchain.
+        public override IAccountStateDelta Execute(IActionContext context)
+        {
+            // Retrieves the previously stored state.
+            IAccountStateDelta states = context.PreviousStates;
+            CountState countState = states.GetState(context.Signer) is Bencodex.Types.Dictionary countStateEncoded
+                ? new CountState(countStateEncoded)
+                : new CountState(0L);
+
+            // Mutates the loaded state, logs the result, and stores the resulting state.
+            long prevCount = countState.Count;
+            countState.AddCount(_plainValue.Count);
+            long nextCount = countState.Count;
+            Debug.Log($"click_action: PrevCount: {prevCount}, NextCount: {nextCount}");
+            return states.SetState(context.Signer, countState.Encode());
+        }
+    }
+}
+```
+
+As can be seen in the comments above, most of the code above is to automate
+serialization and deserialization.  Pay special attention to the `Execute()`
+method where the main logic of the action resides.
 
 <!-- footnotes -->
 
