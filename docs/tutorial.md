@@ -1,5 +1,7 @@
 # Tutorial
 
+## Overview
+
 This tutorial will walk you through creating a basic blockchain application
 called Clicker.  Users will be able to do the following:
 
@@ -44,6 +46,48 @@ In order to run a [Libplanet] blockchain node, the following three are needed:
 These three files can be easily created using Unity Editor menu.  Create each
 using `Create genesis block`, `Create swarm config`, and `Create private key`
 under `Tools` → `Libplanet`.
+
+
+## Basic UI
+
+We will be creating an application with the following components:
+
+- Text showing the player's address.
+- Text showing the total number of registered clicks.
+- A button to click.
+
+### Creating a Scene
+
+Perform the following step by step in Unity Editor:
+
+- Create a new scene: Right click on `Assets/Scenes` directory in
+  Unity Editor inside the Project panel and select `Create` → `Scene`
+  and name it as `Game`.
+  - Double click on the newly created scene `Game` to activate it.  Once
+    activated, `Game` should show inside the Hierarchy panel.
+  - Right click on `Directional Light` object under `Game` inside the Hierarchy
+    panel and select `Delete` to remove it from the scene.
+- Edit the main camera: Inside the Hierarchy panel, select `Main Camera`.
+  - Inside the Scene panel, select `2D`.
+  - Inside the Insepctor panel, set `Clear Flags` to `Solid Color`,
+    `Projection` to `Orthographic`, and `MSAA` to `Off`.
+- Create a new canvas: Right click on `Game` inside the Hierarchy panel
+  and select `GameObject` → `UI` → `Canvas`.
+  - Select `Canvas` inside the Hierarchy panel
+  - Inside the Inspecter panel, set `Render Mode` to `Screen Space - Camera`,
+    drag and drop `Main Camera` from the Hierarchy panel to the box next to
+    `Render Camera`, and set `UI Scale Mode` to `Scale With Screen Size`.
+  - Right click on `Canvas` inside the Hierarchy panel and select `Properties`.
+    Select `Add Component` from the properties window and select
+    `Horizontal Layout Group`.
+- Create a game object: Right click on `Canvas` inside the Hierarchy panel
+  and select `Create Empty` to create a `GameObject`.
+  - Right click on `GameObject` and select `UI` → `Legacy` → `Text` twice
+    to create two `Text` objects.  Name them as `AddressText`
+    and `TotalCountText`.
+  - Again, right click on `Canvas` inside the Hierarchy panel and
+    select `UI` → `Legacy` → `Button` to create a button.
+  - Drag objects around inside the scene panel so they do not overlap.
 
 
 ## Actions and States
