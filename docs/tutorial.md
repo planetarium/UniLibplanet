@@ -80,15 +80,92 @@ Perform the following step by step in Unity Editor:
   - Right click on `Canvas` inside the Hierarchy panel and select `Properties`.
     Select `Add Component` from the properties window and select
     `Horizontal Layout Group`.
-- Create a game object: Right click on `Canvas` inside the Hierarchy panel
-  and select `Create Empty` to create a `GameObject`.
-  - Right click on `GameObject` and select `UI` → `Legacy` → `Text` twice
+- Create an interface: Right click on `Canvas` inside the Hierarchy panel
+  and select `Create Empty` to create a `GameObject`.  Rename the newly created
+  `GameObject` as `Interface`.
+  - Right click on `Interface` and select `UI` → `Legacy` → `Text` twice
     to create two `Text` objects.  Name them as `AddressText`
     and `TotalCountText`.
   - Again, right click on `Canvas` inside the Hierarchy panel and
     select `UI` → `Legacy` → `Button` to create a button.
   - Drag objects around inside the scene panel so they do not overlap.
+- Create a game object: Right click on `Game` inside the Hierarchy panel
+  and select `Create Empty` to create a `GameObject`.
 
+When finished, the Hierarchy panel should look something like below.
+
+![Hierarchy Panel](./assets/images/hierarchy_panel.png)
+
+### Initial Script for UI
+
+Create a file named `Click.cs` under `Assets/Scripts` with
+the following content.
+
+```csharp
+namespace Scripts
+{
+    public class Click
+    {
+        public int Count { get; set; } = 0;
+
+        public void Add()
+        {
+            Count++;
+        }
+
+        public void ResetCount()
+        {
+            Count = 0;
+        }
+    }
+}
+```
+
+Also create a file named `Game.cs` under `Assets/Scripts` with
+the following content.
+
+```csharp
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Scripts
+{
+    public class Game : MonoBehaviour
+    {
+        public Text TotalCountText;
+        public Text AddressText;
+        public Click Click;
+
+        public void Awake()
+        {
+            TotalCountText.text = "Total Count: 0";
+            AddressText.text = "Address: 0000";
+        }
+    }
+}
+```
+
+Now we connect the scripts above to the UI using the following steps:
+
+- Select `Button` from the Hierarchy panel.  Inside the Inspector panel,
+  select `Add Component` → `Scripts` → `Scripts` → `Click` to register
+  `Click.cs` to the button.
+  - There should be an `On Click ()` field inside the Inspector panel.
+  - Select `+` to add to the list.  Then drag and drop `Button` object
+    from the Hierarchy panel to the newly created element under `On Click ()`.
+  - Change `No Function` to `Click` → `Add ()`.
+- Select `GameObject` from the Hierarchy panel.  Inside the Inspector panel,
+  select `Add Component` → `Scripts` → `Scripts` → `Game`.
+  - Inside the Inspector panel, under `Game` component, you should see
+    `Total Account Text`, `Address Text`, and `Click`; drag and drop objects
+    from the Hierarchy panel to each corresponding box accordingly.
+
+When done, the Inspector panel for `GameObject` should look like below.
+
+![Game Object](./assets/images/game_object.png)
+
+Try build and run.  If everything was done accordingly, you should see
+`Total Count: 0` and `Address: 0000` on your screen.
 
 ## Actions and States
 
@@ -119,7 +196,6 @@ with the following content.
 
 ```csharp
 using Libplanet.Store;
-using Scripts.Data;
 
 namespace Scripts.States
 {
@@ -171,14 +247,14 @@ namespace Scripts.Actions
     {
         public long Count { get; private set; }
 
-        public AddCountPlainValue(long count)
+        public ClickActionPlainValue(long count)
             : base()
         {
             Count = count;
         }
 
         // Used for deserializing stored action.
-        public AddCountPlainValue(Bencodex.Types.Dictionary encoded)
+        public ClickActionPlainValue(Bencodex.Types.Dictionary encoded)
             : base(encoded)
         {
         }
@@ -199,7 +275,7 @@ with the following content for `ClickAction` action.
 using System;
 using Libplanet.Action;
 using Libplanet.Unity;
-using Scripts.State;
+using Scripts.States;
 using UnityEngine;
 
 namespace Scripts.Actions
@@ -229,23 +305,26 @@ namespace Scripts.Actions
         {
             if (plainValue is Bencodex.Types.Dictionary bdict)
             {
-                _plainValue = new AddCountPlainValue(bdict);
+                _plainValue = new ClickActionPlainValue(bdict);
             }
             else
             {
-                throw new ArgumentException($"Invalid {nameof(plainValue)} type: {plainValue.GetType()}");
+                throw new ArgumentException(
+                    $"Invalid {nameof(plainValue)} type: {plainValue.GetType()}");
             }
         }
 
         // Executes an action.
-        // This is what gets called when a block containing an action is mined or appended to a blockchain.
+        // This is what gets called when a block containing an action is mined
+        // or appended to a blockchain.
         public override IAccountStateDelta Execute(IActionContext context)
         {
             // Retrieves the previously stored state.
             IAccountStateDelta states = context.PreviousStates;
-            CountState countState = states.GetState(context.Signer) is Bencodex.Types.Dictionary countStateEncoded
-                ? new CountState(countStateEncoded)
-                : new CountState(0L);
+            CountState countState =
+                states.GetState(context.Signer) is Bencodex.Types.Dictionary countStateEncoded
+                    ? new CountState(countStateEncoded)
+                    : new CountState(0L);
 
             // Mutates the loaded state, logs the result, and stores the resulting state.
             long prevCount = countState.Count;
@@ -264,7 +343,9 @@ method where the main logic of the action resides.
 
 <!-- footnotes -->
 
----
+----
+
+### Footnotes
 
 [^1]: Blocks will be mined regardless of whether there are any transactions
       to mine or not.
