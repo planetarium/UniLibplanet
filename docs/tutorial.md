@@ -102,9 +102,11 @@ Create a file named `Click.cs` under `Assets/Scripts` with
 the following content.
 
 ```csharp
+using UnityEngine;
+
 namespace Scripts
 {
-    public class Click
+    public class Click : MonoBehaviour
     {
         public int Count { get; set; } = 0;
 
@@ -370,7 +372,7 @@ namespace Scripts
         // Connected to UI elements.
         public Text TotalCountText;
         public Text AddressText;
-        public Click click;
+        public Click Click;
 
         // Internal timer.
         private float _timer;
@@ -448,17 +450,17 @@ namespace Scripts
             // Afterwards, resets the timer and the count.
             else
             {
-                if (click.Count > 0)
+                if (Click.Count > 0)
                 {
                     List<ActionBase> actions = new List<ActionBase>()
                     {
-                        new ClickAction(click.Count)
+                        new ClickAction(Click.Count)
                     };
                     Agent.Instance.MakeTransaction(actions);
                 }
 
                 _timer = TxProcessInterval;
-                click.ResetCount();
+                Click.ResetCount();
             }
         }
 
