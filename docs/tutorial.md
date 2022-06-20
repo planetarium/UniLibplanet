@@ -343,8 +343,14 @@ As can be seen in the comments above, most of the code above is to automate
 serialization and deserialization.  Pay special attention to the `Execute()`
 method where the main logic of the action resides.
 
+Note that `Execute()` is called when the action is evaluated by a blockchain,
+**not** when the button is clicked or when the action is created.
+
 
 ## Script `Game.cs`
+
+Now to tie everything together, change the content of `Game.cs` we have
+created previously with the following:
 
 ```csharp
 using System.Collections.Generic;
@@ -472,6 +478,36 @@ namespace Scripts
     }
 }
 ```
+
+In order for an application to react to a blockchain level event, such as
+a change in the tip of the local blockchain and/or created actions
+getting included, the application needs to pass a set of callback methods
+for an `Agent` to call.  These are called renderers and must implement
+the `IRenderer` interface.
+
+In the example above, when `ClickAction` action gets evaluated, the
+blockchain calls the method
+
+```csharp
+ActionRenderer = (action, context, nextStates) =>
+{
+    // Invoke the event handler only if the state is updated.
+    if (nextStates.GetState(context.Signer) is Bencodex.Types.Dictionary bdict)
+    {
+        Agent.Instance.RunOnMainThread(() =>
+        {
+            _countUpdatedEvent.Invoke(new CountState(bdict));
+        });
+    }
+}
+```
+
+where it is picked up by `UpdateTotalCountText()` method as it was added as
+a listener to `_countUpdatedEvent` in the previous part of the code.
+
+Now, you can build and run the application, and if you see the total count
+on the screen updating periodically when pressing the button,
+then congratulations!  You've just made your very first blockchain application!
 
 <!-- footnotes -->
 
