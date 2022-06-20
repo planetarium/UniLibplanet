@@ -61,40 +61,40 @@ We will be creating an application with the following components:
 Perform the following step by step in Unity Editor:
 
 - Create a new scene: Right click on `Assets/Scenes` directory in
-  Unity Editor inside the Project panel and select `Create` → `Scene`
+  Unity Editor inside the **Project** panel and select `Create` → `Scene`
   and name it as `Game`.
   - Double click on the newly created scene `Game` to activate it.  Once
-    activated, `Game` should show inside the Hierarchy panel.
+    activated, `Game` should show inside the **Hierarchy** panel.
   - Right click on `Directional Light` object under `Game` inside the Hierarchy
     panel and select `Delete` to remove it from the scene.
-- Edit the main camera: Inside the Hierarchy panel, select `Main Camera`.
+- Edit the main camera: Inside the **Hierarchy** panel, select `Main Camera`.
   - Inside the Scene panel, select `2D`.
-  - Inside the Insepctor panel, set `Clear Flags` to `Solid Color`,
+  - Inside the **Inspector** panel, set `Clear Flags` to `Solid Color`,
     `Projection` to `Orthographic`, and `MSAA` to `Off`.
-- Create a new canvas: Right click on `Game` inside the Hierarchy panel
+- Create a new canvas: Right click on `Game` inside the **Hierarchy** panel
   and select `GameObject` → `UI` → `Canvas`.
-  - Select `Canvas` inside the Hierarchy panel
-  - Inside the Inspecter panel, set `Render Mode` to `Screen Space - Camera`,
-    drag and drop `Main Camera` from the Hierarchy panel to the box next to
+  - Select `Canvas` inside the **Hierarchy** panel
+  - Inside the **Inspector** panel, set `Render Mode` to `Screen Space - Camera`,
+    drag and drop `Main Camera` from the **Hierarchy** panel to the box next to
     `Render Camera`, and set `UI Scale Mode` to `Scale With Screen Size`.
-  - Right click on `Canvas` inside the Hierarchy panel and select `Properties`.
+  - Right click on `Canvas` inside the **Hierarchy** panel and select `Properties`.
     Select `Add Component` from the properties window and select
     `Horizontal Layout Group`.
-- Create an interface: Right click on `Canvas` inside the Hierarchy panel
+- Create an interface: Right click on `Canvas` inside the **Hierarchy** panel
   and select `Create Empty` to create a `GameObject`.  Rename the newly created
   `GameObject` as `Interface`.
   - Right click on `Interface` and select `UI` → `Legacy` → `Text` twice
     to create two `Text` objects.  Name them as `AddressText`
     and `TotalCountText`.
-  - Again, right click on `Canvas` inside the Hierarchy panel and
+  - Again, right click on `Canvas` inside the **Hierarchy** panel and
     select `UI` → `Legacy` → `Button` to create a button.
   - Drag objects around inside the scene panel so they do not overlap.
-- Create a game object: Right click on `Game` inside the Hierarchy panel
+- Create a game object: Right click on `Game` inside the **Hierarchy** panel
   and select `Create Empty` to create a `GameObject`.
 
-When finished, the Hierarchy panel should look something like below.
+When finished, the **Hierarchy** panel should look something like below.
 
-![Hierarchy Panel](./assets/images/hierarchy_panel.png)
+![**Hierarchy** panel](./assets/images/hierarchy_panel.png)
 
 ### Initial Script for UI
 
@@ -147,20 +147,20 @@ namespace Scripts
 
 Now we connect the scripts above to the UI using the following steps:
 
-- Select `Button` from the Hierarchy panel.  Inside the Inspector panel,
+- Select `Button` from the **Hierarchy** panel.  Inside the **Inspector** panel,
   select `Add Component` → `Scripts` → `Scripts` → `Click` to register
   `Click.cs` to the button.
-  - There should be an `On Click ()` field inside the Inspector panel.
+  - There should be an `On Click ()` field inside the **Inspector** panel.
   - Select `+` to add to the list.  Then drag and drop `Button` object
-    from the Hierarchy panel to the newly created element under `On Click ()`.
+    from the **Hierarchy** panel to the newly created element under `On Click ()`.
   - Change `No Function` to `Click` → `Add ()`.
-- Select `GameObject` from the Hierarchy panel.  Inside the Inspector panel,
-  select `Add Component` → `Scripts` → `Scripts` → `Game`.
-  - Inside the Inspector panel, under `Game` component, you should see
+- Select `GameObject` from the **Hierarchy** panel.  Inside the **Inspector**
+  panel, select `Add Component` → `Scripts` → `Scripts` → `Game`.
+  - Inside the **Inspector** panel, under `Game` component, you should see
     `Total Account Text`, `Address Text`, and `Click`; drag and drop objects
-    from the Hierarchy panel to each corresponding box accordingly.
+    from the **Hierarchy** panel to each corresponding box accordingly.
 
-When done, the Inspector panel for `GameObject` should look like below.
+When done, the **Inspector** panel for `GameObject` should look like below.
 
 ![Game Object](./assets/images/game_object.png)
 
