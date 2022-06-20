@@ -45,3 +45,8 @@ Desktop.ini
 
 # env
 .env.xml
+.env
+
+# Unity Build
+/out/*
+debug.txt
