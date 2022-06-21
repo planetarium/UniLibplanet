@@ -1,10 +1,7 @@
-$DOTENV_FILE = Get-Content ".\.env"
-$UNITY_DIR = [regex]::Match($DOTENV_FILE, "UNITY_DIR=`"(.*?)\\`"").Groups[1].Value
+$DOTENV_PATH = ".\.env.xml"
+$UNITY_DIR = (Select-Xml -Path $DOTENV_PATH -XPath "//UNITY_DIR[1]" | Select-Object -ExpandProperty Node).InnerText
+$UNITY_PATH = Join-Path -Path $UNITY_DIR -ChildPath "Unity.exe"
 
-$UNITY_PATH = $UNITY_DIR + "Unity.exe"
- 
-Write-Output ""
-Write-Output "Unity Build Start"
-Write-Output ""
-
-& $UNITY_PATH -batchmode -quit -logFile debug.txt -nographics -projectPath "$PWD\Unilibplanet" -executeMethod PackageExporter.Export
+Write-Host "Unity build start..."
+& $UNITY_PATH -batchmode -quit -logFile debug.txt -nographics -projectPath ".\Unilibplanet" -executeMethod PackageExporter.Export
+Write-Host "Unity build finished"
