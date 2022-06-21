@@ -7,4 +7,4 @@ Write-Output ""
 Write-Output "Unity Build Start"
 Write-Output ""
 
-& $UNITY_PATH -batchmode -quit -logFile debug.txt -nographics -projectPath "$PWD\UnitySDK" -executeMethod PackageExporter.Export
+& $UNITY_PATH -batchmode -quit -logFile debug.txt -nographics -projectPath "$PWD\Unilibplanet" -executeMethod PackageExporter.Export

@@ -10,7 +10,7 @@ public static class PackageExporter
     {
         DirectoryInfo projectRoot = Directory.GetParent(Directory.GetCurrentDirectory());
         var outputDirectory = new DirectoryInfo(Path.Combine(projectRoot.FullName, "out"));
-        string exportPath = Path.Combine(outputDirectory.FullName, "SDK.unitypackage");
+        string exportPath = Path.Combine(outputDirectory.FullName, "Unilibplanet.unitypackage");
         
         outputDirectory.Create();
 
