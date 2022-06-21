@@ -1,5 +1,5 @@
 $DLLS_DIR = ".\Pack\bin\Release\netstandard2.0\*.dll"
-$PLUGINS_DIR = "$PWD\UnitySDK\Assets\Plugins\"
+$PLUGINS_DIR = "$PWD\Unilibplanet\Assets\Plugins\"
 
 New-Item -Path $PLUGINS_DIR -ItemType Directory
 
