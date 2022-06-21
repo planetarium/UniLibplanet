@@ -1,4 +1,3 @@
-$XMLENV_PATH = ".\.env.xml"
 $DOTENV_PATH = ".\.env"
 
 $expected_paths = Get-ChildItem -Path "\Program Files" -Filter "unity.exe" -Recurse | Select-Object Fullname | Format-List | Out-String
