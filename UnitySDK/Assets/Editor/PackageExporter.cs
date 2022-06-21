@@ -17,6 +17,7 @@ public static class PackageExporter
         var exportedPackageAssetList = new List<string>();
         //Add Prefabs folder into the asset list
         exportedPackageAssetList.Add("Assets/Plugins");
+        exportedPackageAssetList.Add("Assets/Libplanet.Unity");
 
         AssetDatabase.ExportPackage(
             exportedPackageAssetList.ToArray(),
