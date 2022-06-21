@@ -45,4 +45,5 @@ sysinfo.txt
 .sln.DotSettins
 
 # Libplanet Dlls
-/Assets/Plugins/Libplanet*
+/Assets/Plugins/*
+/Assets/Libplanet.Unity/*
