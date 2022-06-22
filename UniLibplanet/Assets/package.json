@@ -1,6 +1,6 @@
 {
     "name": "com.planetarium.unilibplanet",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "displayName": "UniLibplanet",
     "description": "Libplanet SDK for Unity",
     "unity": "2021.3",

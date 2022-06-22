@@ -1,6 +1,6 @@
 $LIBPLANET_UNITY_DIR = ".\Libplanet.Unity\"
 $DLLS_DIR = ".\Libplanet.Unity\bin\Release\netstandard2.1\*.dll"
-$PLUGINS_DIR = ".\Unilibplanet\Assets\Plugins\"
+$PLUGINS_DIR = ".\UniLibplanet\Assets\Plugins\"
 $EXCLUDES = @("Microsoft.CSharp.dll", "System.ServiceModel.Primitives.dll", "Unity*.dll")
 $ARTIFACT_DIRS = @(".\Libplanet.Unity\bin\", ".\Libplanet.Unity\obj\")
 
