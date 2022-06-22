@@ -18,19 +18,19 @@ called Clicker.  Users will be able to do the following:
 <!-- This subsection should be rewritten for importing an SDK package -->
 ### Development Environment Setup
 
-To ease the initial setup process, such as packaging `dll` files etc.,
-we will be using [this template][template] as a starting point.  You can
-also check the finished sample project [here][sample].
-
 First and foremost, install [Unity Hub] first[^2].  Once finished,
-clone [this][template] repository using [git] to any location you like.
+open [Unity Hub] and from `Installs` → `Install Editor`, install
+Unity Editor version `2021.3.0f1`.  After Unity Editor installation is done,
+go to `Projects` and select `New Project`.  From the `New Project` screen,
+select `2D Core`, select a location to save your project, and name it `Clicker`.
+Once everything is set up, click on `Create Project` and wait for
+Unity Editor window to show up.
 
-Open installed [Unity Hub] and from `Open` → `Add project from disk`,
-select `Clicker` directory and select `Add project`.  Once `Clicker` project
-is added to the list of projects, click on the project to open.  You will be
-prompted to choose a Unity Editor version.  If you don't have Unity Editor
-version 2021.3.0f1 already installed, install it first and select the version
-from the list and press `Open with 2021.3.0f1`[^3].
+Now, download the latest [UniLibplanet.unitypackage][UniLibplanet releases] from
+the [UniLibplanet][UniLibplanet] [GitHub] repository.  From Unity Editor,
+select `Assets` → `Import Package` → `Custom Pakcage` from the top menu
+and select the downloaded [UniLibplanet.unitypackage] file.  Confirm with
+`Import` to import everything.
 
 ### Blockchain Node Setup
 
@@ -525,6 +525,9 @@ then congratulations!  You've just made your very first blockchain application!
 <!-- links -->
 
 [Unity Hub]: https://unity3d.com/get-unity/download
+[UniLibplanet]: https://github.com/planetarium/
+[UniLibplanet releases]: https://github.com/planetarium/UniLibplanet/releases
+[GitHub]: https://github.com/
 [template]: https://github.com/planetarium/libplanet-unity-template
 [sample]: https://github.com/planetarium/planet-clicker/tree/sample
 [git]: https://git-scm.com/
