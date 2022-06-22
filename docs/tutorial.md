@@ -60,17 +60,11 @@ We will be creating an application with the following components:
 
 Perform the following step by step in Unity Editor:
 
-- Create a new scene: Right click on `Assets/Scenes` directory in
-  Unity Editor inside the **Project** panel and select `Create` → `Scene`
-  and name it as `Game`.
-  - Double click on the newly created scene `Game` to activate it.  Once
+- Set up a scene: Navigate to `Assets/Scenes` directory in
+  Unity Editor inside the **Project** panel.  There should be `SampleScene`
+  already inside.  Rename `SampleScene` to `Game`.
+  - Double click on the `Game` scene to activate it.  Once
     activated, `Game` should show inside the **Hierarchy** panel.
-  - Right click on `Directional Light` object under `Game` inside the Hierarchy
-    panel and select `Delete` to remove it from the scene.
-- Edit the main camera: Inside the **Hierarchy** panel, select `Main Camera`.
-  - Inside the Scene panel, select `2D`.
-  - Inside the **Inspector** panel, set `Clear Flags` to `Solid Color`,
-    `Projection` to `Orthographic`, and `MSAA` to `Off`.
 - Create a new canvas: Right click on `Game` inside the **Hierarchy** panel
   and select `GameObject` → `UI` → `Canvas`.
   - Select `Canvas` inside the **Hierarchy** panel
