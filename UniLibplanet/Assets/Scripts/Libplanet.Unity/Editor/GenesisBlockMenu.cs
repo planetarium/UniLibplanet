@@ -41,6 +41,7 @@ namespace Libplanet.Unity.Editor
         {
             const string title = "Create genesis block";
             string path = Paths.GenesisBlockPath;
+            DirectoryInfo directory = new DirectoryInfo(Path.GetDirectoryName(path));
 
             if (File.Exists(path))
             {
@@ -56,6 +57,11 @@ namespace Libplanet.Unity.Editor
                 {
                     return;
                 }
+            }
+
+            if (!directory.Exists)
+            {
+                directory.Create();
             }
 
             // TODO: Allow creating a genesis block with transactions.

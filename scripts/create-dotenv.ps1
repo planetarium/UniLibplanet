@@ -1,50 +1,75 @@
-$ENV_PATH = ".\.env.xml"
+$DOTENV_PATH = ".\.env.xml"
 
-$expected_paths = Get-ChildItem -Path "\Program Files" -Filter "unity.exe" -Recurse | Select-Object Fullname | Format-List | Out-String
-$expected_paths = $expected_paths.Split("`n", [StringSplitOptions]::RemoveEmptyEntries)
-
-$unity_paths = @()
-
-foreach ($p in $expected_paths) {
-    if ($p) {
-        $path_data = [regex]::Match($p, '^FullName\s:\s(.*)Unity.exe').captures.groups
-        if ($path_data) {
-            $unity_paths = $unity_paths + $path_data[1].value
-        }
-    }
+function Get-Unity-Paths {
+    return @(Get-ChildItem -Path "\Program Files\Unity" -Filter "Unity.exe" -Recurse)
 }
 
-$TARGET_PATH = "null"
-
-do {
-    $option = 1
-    foreach ($p in $unity_paths) {
-        Write-Output $option" - [ "$p" ]"
-        $option++
+function Select-Unity-Path ($paths) {
+    $caption = "Unity Editor versions found"
+    $i = 0
+    $list = ""
+    foreach ($path in $paths) {
+        $i++
+        $list = $list + "$i - $path" + [Environment]::NewLine
     }
 
-    Write-Output ""
-    $Prompt = Read-host "Pls Select"
-    if ( ($Prompt -gt 0 -and $Prompt -lt $option) ) {
-        $TARGET_PATH = $unity_paths[$Prompt - 1]
-        Write-Output ""
-        Write-Output "Selected Path"$TARGET_PATH
-        Write-Output ""
+    $message = @"
+Choose a version
+$list
+"@
+
+    $i = 0
+    $options = @()
+    foreach ($path in $paths) {
+        $i++
+        $options = $options + [System.Management.Automation.Host.ChoiceDescription]::new("&$i", "$path")
     }
-    else {
-        Write-Output ""
-        Write-Output "Wrong Selection!"
-        Write-Output ""
+    $options = $options + [System.Management.Automation.Host.ChoiceDescription]::new("&Quit", "Terminate")
+    $choice = $Host.UI.PromptForChoice($caption, $message, $options, $options.Count - 1)
+    if ($choice -eq $options.Count - 1)
+    {
+        Write-Host "Terminating..."
+        exit
     }
-} while ($TARGET_PATH -eq "null")
+    Write-Host "$($paths[$choice]) selected"
+    return Split-Path -Path $paths[$choice]
+}
 
-$UNITY_ENGINE_DIR = "$TARGET_PATH\Data\Managed\UnityEngine"
+function Write-Env ($content) {
+    if (Test-Path -Path $DOTENV_PATH) {
+        $caption = "Existing $DOTENV_PATH found"
+        $message = "Overwrite it?"
+        $options = @(
+            [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Remove existing $DOTENV_PATH and create a new $DOTENV_PATH")
+            [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Do nothing")
+        )
+        $choice = $Host.UI.PromptForChoice($caption, $message, $options, 1)
+        if ($choice -eq 0) {
+            Write-Host "Removing existing $DOTENV_PATH..."
+            Remove-Item $DOTENV_PATH
+        }
+        else {
+            return
+        }
+    }
 
-$xml_value = "<Project>
-`t<PropertyGroup>
-`t`t<UNITY_ENGINE_DIR>$UNITY_ENGINE_DIR</UNITY_ENGINE_DIR>
-`t</PropertyGroup>
-</Project>"
+    Write-Host "Writing new $DOTENV_PATH..."
+    Set-Content $DOTENV_PATH $content
+}
 
-New-Item $ENV_PATH -ItemType File
-Set-Content $ENV_PATH $xml_value
+$unity_paths = Get-Unity-Paths
+if ($unity_paths.Count -eq 0) {
+    Write-Host "No Unity Editor was found"
+    exit
+}
+$unity_dir = Select-Unity-Path($unity_paths)
+$unity_engine_dir = Join-Path -Path $unity_dir -ChildPath "Data\Managed\UnityEngine"
+$dotenv_content = @"
+<Project>
+	<PropertyGroup>
+		<UNITY_DIR>$unity_dir</UNITY_DIR>
+		<UNITY_ENGINE_DIR>$unity_engine_dir</UNITY_ENGINE_DIR>
+	</PropertyGroup>
+</Project>
+"@
+Write-Env($dotenv_content)
