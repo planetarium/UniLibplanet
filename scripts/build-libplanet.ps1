@@ -1,8 +1,8 @@
-$LIBPLANET_UNITY_DIR = ".\Unilibplanet\Assets\Libplanet.Unity\"
-$DLLS_DIR = ".\Unilibplanet\Assets\Libplanet.Unity\bin\Release\netstandard2.1\*.dll"
+$LIBPLANET_UNITY_DIR = ".\Libplanet.Unity\"
+$DLLS_DIR = ".\Libplanet.Unity\bin\Release\netstandard2.1\*.dll"
 $PLUGINS_DIR = ".\Unilibplanet\Assets\Plugins\"
-$EXCLUDES = @("Libplanet.Unity.dll", "Microsoft.CSharp.dll", "System.ServiceModel.Primitives.dll", "Unity*.dll")
-$ARTIFACT_DIRS = @(".\Unilibplanet\Assets\Libplanet.Unity\bin\", ".\Unilibplanet\Assets\Libplanet.Unity\obj\")
+$EXCLUDES = @("Microsoft.CSharp.dll", "System.ServiceModel.Primitives.dll", "Unity*.dll")
+$ARTIFACT_DIRS = @(".\Libplanet.Unity\bin\", ".\Libplanet.Unity\obj\")
 
 Write-Host "Starting DLL build..."
 & dotnet build $LIBPLANET_UNITY_DIR --configuration Release
