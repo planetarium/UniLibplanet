@@ -1,8 +1,8 @@
 {
     "name": "com.planetarium.unilibplanet",
     "version": "0.1.0",
-    "displayName": "Unilibplanet",
-    "description": "Libplanet Extensions for Unity",
+    "displayName": "UniLibplanet",
+    "description": "Libplanet SDK for Unity",
     "unity": "2021.3",
     "author": {
         "name": "Planetarium",
