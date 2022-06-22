@@ -45,6 +45,7 @@ namespace Libplanet.Unity.Editor
         {
             const string title = "Create private key";
             string path = Paths.PrivateKeyPath;
+            DirectoryInfo directory = new DirectoryInfo(Path.GetDirectoryName(path));
 
             if (File.Exists(path))
             {
@@ -59,6 +60,11 @@ namespace Libplanet.Unity.Editor
                 {
                     return;
                 }
+            }
+
+            if (!directory.Exists)
+            {
+                directory.Create();
             }
 
             Utils.CreatePrivateKey(path);
@@ -199,6 +205,12 @@ namespace Libplanet.Unity.Editor
                 if (_valid)
                 {
                     string path = Paths.TempPrivateKeysPath;
+                    DirectoryInfo directory = new DirectoryInfo(Path.GetDirectoryName(path));
+                    if (!directory.Exists)
+                    {
+                        directory.Create();
+                    }
+
                     using (StreamWriter stream = new StreamWriter(path, true, Encoding.UTF8))
                     {
                         stream.WriteLine(_saveText);
