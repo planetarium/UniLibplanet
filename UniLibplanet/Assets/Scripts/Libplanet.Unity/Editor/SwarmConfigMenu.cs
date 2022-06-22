@@ -41,6 +41,7 @@ namespace Libplanet.Unity.Editor
         {
             const string title = "Create swarm config";
             string path = Paths.SwarmConfigPath;
+            DirectoryInfo directory = new DirectoryInfo(Path.GetDirectoryName(path));
 
             if (File.Exists(path))
             {
@@ -55,6 +56,11 @@ namespace Libplanet.Unity.Editor
                 {
                     return;
                 }
+            }
+
+            if (!directory.Exists)
+            {
+                directory.Create();
             }
 
             Utils.CreateSwarmConfig(path);
