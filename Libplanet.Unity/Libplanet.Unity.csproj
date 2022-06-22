@@ -28,7 +28,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);NU5104;MEN001</NoWarn>
     <IsTestProject>false</IsTestProject>
-    <CodeAnalysisRuleSet>..\..\..\libplanet\Libplanet.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\libplanet\Libplanet.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -36,13 +36,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\libplanet\LICENSE" Pack="true" PackagePath="LICENSE.txt" />
-    <None Include="..\..\..\libplanet\README.md" Pack="true" PackagePath="README.md" />
-    <None Include="..\..\..\libplanet\icon.png" Pack="true" PackagePath="icon.png" />
-    <AdditionalFiles Include="..\..\..\libplanet\Menees.Analyzers.Settings.xml">
+    <None Include="..\libplanet\LICENSE" Pack="true" PackagePath="LICENSE.txt" />
+    <None Include="..\libplanet\README.md" Pack="true" PackagePath="README.md" />
+    <None Include="..\libplanet\icon.png" Pack="true" PackagePath="icon.png" />
+    <AdditionalFiles Include="..\libplanet\Menees.Analyzers.Settings.xml">
       <Link>Menees.Analyzers.Settings.xml</Link>
     </AdditionalFiles>
-    <AdditionalFiles Include="..\..\..\libplanet\stylecop.json" />
+    <AdditionalFiles Include="..\libplanet\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Menees.Analyzers.2017" Version="2.0.3">
@@ -72,12 +72,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\libplanet\Libplanet.Node\Libplanet.Node.csproj" />
-    <ProjectReference Include="..\..\..\libplanet\Libplanet.Net\Libplanet.Net.csproj" />
-    <ProjectReference Include="..\..\..\libplanet\Libplanet\Libplanet.csproj" />
+    <ProjectReference Include="..\libplanet\Libplanet.Node\Libplanet.Node.csproj" />
+    <ProjectReference Include="..\libplanet\Libplanet.Net\Libplanet.Net.csproj" />
+    <ProjectReference Include="..\libplanet\Libplanet\Libplanet.csproj" />
   </ItemGroup>
 
-  <Import Project="..\..\..\.env.xml"></Import>
+  <Import Project="..\.env.xml"></Import>
   <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>$(UNITY_ENGINE_DIR)\UnityEngine.dll</HintPath>
@@ -94,9 +94,5 @@
     <Reference Include="UnityEditor.CoreModule">
       <HintPath>$(UNITY_ENGINE_DIR)\UnityEditor.CoreModule.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove=".\Editor\**" />
   </ItemGroup>
 </Project>

@@ -43,6 +43,3 @@ sysinfo.txt
 .vscode
 .vscode/
 .sln.DotSettins
-
-# Libplanet Dlls
-/Assets/Plugins/*
