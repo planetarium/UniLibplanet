@@ -15,12 +15,11 @@ called Clicker.  Users will be able to do the following:
 
 ## Initial Setup
 
-<!-- This subsection should be rewritten for importing an SDK package -->
 ### Development Environment Setup
 
 First and foremost, install [Unity Hub] first[^2].  Once finished,
 open [Unity Hub] and from `Installs` → `Install Editor`, install
-Unity Editor version `2021.3.0f1`.  After Unity Editor installation is done,
+Unity Editor version `2021.3.0f1`[^3].  After Unity Editor installation is done,
 go to `Projects` and select `New Project`.  From the `New Project` screen,
 select `2D Core`, select a location to save your project, and name it `Clicker`.
 Once everything is set up, click on `Create Project` and wait for
@@ -60,31 +59,36 @@ We will be creating an application with the following components:
 
 Perform the following step by step in Unity Editor:
 
-- Set up a scene: Navigate to `Assets/Scenes` directory in
-  Unity Editor inside the **Project** panel.  There should be `SampleScene`
-  already inside.  Rename `SampleScene` to `Game`.
+- Set up a scene:
+  - Navigate to `Assets/Scenes` directory in Unity Editor inside
+    the **Project** panel.  There should be `SampleScene` already inside.
+    Rename `SampleScene` to `Game`.
   - Double click on the `Game` scene to activate it.  Once
     activated, `Game` should show inside the **Hierarchy** panel.
-- Create a new canvas: Right click on `Game` inside the **Hierarchy** panel
-  and select `GameObject` → `UI` → `Canvas`.
-  - Select `Canvas` inside the **Hierarchy** panel
-  - Inside the **Inspector** panel, set `Render Mode` to `Screen Space - Camera`,
-    drag and drop `Main Camera` from the **Hierarchy** panel to the box next to
-    `Render Camera`, and set `UI Scale Mode` to `Scale With Screen Size`.
+- Create a new canvas:
+  - Right click on `Game` inside the **Hierarchy** panel and select
+    `GameObject` → `UI` → `Canvas`.
+  - Select `Canvas` inside the **Hierarchy** panel.
+  - Inside the **Inspector** panel, set `Render Mode` to
+    `Screen Space - Camera`, drag and drop `Main Camera` from the **Hierarchy**
+    panel to the box next to `Render Camera`, and set `UI Scale Mode`
+    to `Scale With Screen Size`.
   - Right click on `Canvas` inside the **Hierarchy** panel and select `Properties`.
     Select `Add Component` from the properties window and select
-    `Horizontal Layout Group`.
-- Create an interface: Right click on `Canvas` inside the **Hierarchy** panel
-  and select `Create Empty` to create a `GameObject`.  Rename the newly created
-  `GameObject` as `Interface`.
+    `Layout` → `Horizontal Layout Group`.
+- Create an interface:
+  - Right click on `Canvas` inside the **Hierarchy** panel and select
+    `Create Empty` to create a `GameObject`.  Rename the newly created
+    `GameObject` as `Interface`.
   - Right click on `Interface` and select `UI` → `Legacy` → `Text` twice
     to create two `Text` objects.  Name them as `AddressText`
     and `TotalCountText`.
   - Again, right click on `Canvas` inside the **Hierarchy** panel and
     select `UI` → `Legacy` → `Button` to create a button.
   - Drag objects around inside the scene panel so they do not overlap.
-- Create a game object: Right click on `Game` inside the **Hierarchy** panel
-  and select `Create Empty` to create a `GameObject`.
+- Create a game object:
+  - Right click on `Game` inside the **Hierarchy** panel and select
+    `Create Empty` to create a `GameObject`.
 
 When finished, the **Hierarchy** panel should look something like below.
 
@@ -153,8 +157,9 @@ Now we connect the scripts above to the UI using the following steps:
 - Select `GameObject` from the **Hierarchy** panel.  Inside the **Inspector**
   panel, select `Add Component` → `Scripts` → `Scripts` → `Game`.
   - Inside the **Inspector** panel, under `Game` component, you should see
-    `Total Account Text`, `Address Text`, and `Click`; drag and drop objects
-    from the **Hierarchy** panel to each corresponding box accordingly.
+    `Total Account Text`, `Address Text`, and `Click`; drag and drop
+    text and button objects from the **Hierarchy** panel to each
+    corresponding box accordingly.
 
 When done, the **Inspector** panel for `GameObject` should look like below.
 
@@ -519,10 +524,9 @@ then congratulations!  You've just made your very first blockchain application!
 <!-- links -->
 
 [Unity Hub]: https://unity3d.com/get-unity/download
-[UniLibplanet]: https://github.com/planetarium/
+[UniLibplanet]: https://github.com/planetarium/UniLibplanet
 [UniLibplanet releases]: https://github.com/planetarium/UniLibplanet/releases
 [GitHub]: https://github.com/
-[template]: https://github.com/planetarium/libplanet-unity-template
 [sample]: https://github.com/planetarium/planet-clicker/tree/sample
 [git]: https://git-scm.com/
 [Libplanet]: https://github.com/planetarium/libplanet
