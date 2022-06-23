@@ -64,7 +64,7 @@ namespace Libplanet.Unity
         /// Append action.
         /// </summary>
         /// <returns>This can be <c>null</c>.</returns>
-        public IEnumerator CoStart()
+        public IEnumerator CoProcessActions()
         {
             while (true)
             {

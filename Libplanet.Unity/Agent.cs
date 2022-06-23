@@ -1,9 +1,5 @@
 #nullable disable
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -13,9 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Node;
 using Libplanet.Store;
-using Libplanet.Tx;
 using NetMQ;
-using UnityEngine;
 
 namespace Libplanet.Unity
 {
@@ -25,14 +19,13 @@ namespace Libplanet.Unity
     /// </summary>
     public class Agent : MonoSingleton<Agent>
     {
-        private readonly ConcurrentQueue<System.Action> _actions =
-            new ConcurrentQueue<System.Action>();
-
         private Miner _miner;
 
         private Swarm<PolymorphicAction<ActionBase>> _swarm;
 
         private SwarmRunner _swarmRunner;
+
+        private ActionWorker _actionWorker;
 
         private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
 
@@ -68,26 +61,6 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
-        /// Stage the action transactions.
-        /// </summary>
-        /// <param name="gameActions"><see cref="Action"/> list to be use.</param>
-        public void MakeTransaction(IEnumerable<ActionBase> gameActions)
-        {
-            var actions = gameActions.Select(
-                gameAction => (PolymorphicAction<ActionBase>)gameAction).ToList();
-            Task.Run(() => MakeTransaction(actions, true));
-        }
-
-        /// <summary>
-        /// Append action.
-        /// </summary>
-        /// <param name="action"><see cref="Action"/> to be use.</param>
-        public void RunOnMainThread(System.Action action)
-        {
-            _actions.Enqueue(action);
-        }
-
-        /// <summary>
         /// Dispose <see cref="Swarm{T}"/> and <see cref="NetMQConfig"/> clean up.
         /// </summary>
         protected override void OnDestroy()
@@ -104,6 +77,7 @@ namespace Libplanet.Unity
             ConfigureKeys();
             ConfigureNode(renderers);
             ConfigureMiner();
+            ConfigureActionWorker();
 
             StartCoroutines();
         }
@@ -145,34 +119,18 @@ namespace Libplanet.Unity
                 PrivateKey);
         }
 
+        private void ConfigureActionWorker()
+        {
+            _actionWorker = new ActionWorker(
+                _swarm,
+                PrivateKey);
+        }
+
         private void StartCoroutines()
         {
             StartCoroutine(_swarmRunner.CoSwarmRunner());
             StartCoroutine(_miner.CoStart());
-            StartCoroutine(CoProcessActions());
-        }
-
-        private IEnumerator CoProcessActions()
-        {
-            while (true)
-            {
-                if (_actions.TryDequeue(out System.Action action))
-                {
-                    action();
-                }
-
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
-
-        private Transaction<PolymorphicAction<ActionBase>> MakeTransaction(
-                    IEnumerable<PolymorphicAction<ActionBase>> actions, bool broadcast)
-        {
-            var polymorphicActions = actions.ToArray();
-            Debug.LogFormat(
-                "Make Transaction with Actions: `{0}`",
-                string.Join(",", polymorphicActions.Select(i => i.InnerAction)));
-            return _blockChain.MakeTransaction(PrivateKey, polymorphicActions);
+            StartCoroutine(_actionWorker.CoProcessActions());
         }
     }
 }
