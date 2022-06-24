@@ -83,14 +83,20 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
-        /// Stage the action transactions.
+        /// Creates a <see cref="Transaction{T}"/> with <paramref name="actions"/>
+        /// that can be mined by a <see cref="BlockChain{T}"/>.
         /// </summary>
-        /// <param name="gameActions"><see cref="Action"/> list to be use.</param>
-        public void MakeTransaction(IEnumerable<ActionBase> gameActions)
+        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/>
+        /// to include in a newly created <see cref="Transaction{T}"/>.</param>
+        public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
         {
-            var actions = gameActions.Select(
-                gameAction => (PolymorphicAction<ActionBase>)gameAction).ToList();
-            Task.Run(() => MakeTransaction(actions, true));
+            Task.Run(() =>
+            {
+                Debug.LogFormat(
+                    "Make Transaction with Actions: {0}",
+                    string.Join(", ", actions.Select(i => i.InnerAction)));
+                _blockChain.MakeTransaction(PrivateKey, actions.ToList());
+            });
         }
 
         /// <summary>
@@ -178,16 +184,6 @@ namespace Libplanet.Unity
 
                 yield return new WaitForSeconds(0.1f);
             }
-        }
-
-        private Transaction<PolymorphicAction<ActionBase>> MakeTransaction(
-                    IEnumerable<PolymorphicAction<ActionBase>> actions, bool broadcast)
-        {
-            var polymorphicActions = actions.ToArray();
-            Debug.LogFormat(
-                "Make Transaction with Actions: `{0}`",
-                string.Join(",", polymorphicActions.Select(i => i.InnerAction)));
-            return _blockChain.MakeTransaction(PrivateKey, polymorphicActions);
         }
     }
 }
