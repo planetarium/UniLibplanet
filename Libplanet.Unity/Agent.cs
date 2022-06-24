@@ -58,13 +58,28 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
-        /// Returns the status of the current <see cref="BlockChain{T}"/>.
+        /// Returns the state of <paramref name="address"/> for the current
+        /// <see cref="BlockChain{T}.Tip"/>.
         /// </summary>
-        /// <param name="address"><see cref="Address"/> to be use.</param>
-        /// <returns>This can be <c>null</c>.</returns>
-        public IValue GetState(Address address)
+        /// <param name="address">The <see cref="Address"/> to look up.</param>
+        /// <returns>The state of <paramref name="address"/> at <see cref="BlockChain{T}.Tip"/>.
+        /// This can be <see langword="null"/> if <paramref name="address"/>
+        /// has no value.</returns>
+        public IValue GetState(Address address) => GetState(address, _blockChain.Tip.Hash);
+
+        /// <summary>
+        /// Returns the state of <paramref name="address"/> for <paramref name="blockHash"/>
+        /// <see cref="Block{T}"/>.
+        /// </summary>
+        /// <param name="address">The <see cref="Address"/> to look up.</param>
+        /// <param name="blockHash">The <see cref="BlockHash"/> of the <see cref="Block{T}"/>
+        /// to look up.</param>
+        /// <returns>The state of <paramref name="address"/> at <paramref name="blockHash"/>.
+        /// This can be <see langword="null"/> if <paramref name="address"/>
+        /// has no value.</returns>
+        public IValue GetState(Address address, BlockHash blockHash)
         {
-            return _blockChain.GetState(address);
+            return _blockChain.GetState(address, blockHash);
         }
 
         /// <summary>
