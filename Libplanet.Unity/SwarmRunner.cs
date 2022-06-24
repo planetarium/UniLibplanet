@@ -45,11 +45,6 @@ namespace Libplanet.Unity
         /// <returns>It exists only for WaitUntil.</returns>
         public IEnumerator CoSwarmRunner()
         {
-            if (_swarm is null)
-            {
-                yield break;
-            }
-
             var bootstrapTask = Task.Run(async () =>
             {
                 try

@@ -62,7 +62,7 @@ namespace Libplanet.Unity
         /// Append action.
         /// </summary>
         /// <param name="action"><see cref="Action"/> to be use.</param>
-        public void RunOnMainThread(System.Action action)
+        public void Append(System.Action action)
         {
             _actions.Enqueue(action);
         }
@@ -71,7 +71,7 @@ namespace Libplanet.Unity
         /// Append action.
         /// </summary>
         /// <returns>This can be <c>null</c>.</returns>
-        public IEnumerator CoProcessActions()
+        public IEnumerator CoStart()
         {
             while (true)
             {
@@ -79,19 +79,7 @@ namespace Libplanet.Unity
                 {
                     action();
                 }
-
-                yield return new WaitForSeconds(0.1f);
             }
-        }
-
-        private Transaction<PolymorphicAction<ActionBase>> MakeTransaction(
-                    IEnumerable<PolymorphicAction<ActionBase>> actions, bool broadcast)
-        {
-            var polymorphicActions = actions.ToArray();
-            Debug.LogFormat(
-                "Make Transaction with Actions: `{0}`",
-                string.Join(",", polymorphicActions.Select(i => i.InnerAction)));
-            return _swarm.BlockChain.MakeTransaction(PrivateKey, polymorphicActions);
         }
     }
 }

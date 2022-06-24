@@ -92,7 +92,7 @@ namespace Libplanet.Unity
         /// <param name="action"><see cref="Action"/> to be use.</param>
         public void RunOnMainThread(System.Action action)
         {
-            _actionWorker.RunOnMainThread(action);
+            _actionWorker.Append(action);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Libplanet.Unity
         {
             StartCoroutine(_swarmRunner.CoSwarmRunner());
             StartCoroutine(_miner.CoStart());
-            StartCoroutine(_actionWorker.CoProcessActions());
+            StartCoroutine(_actionWorker.CoStart());
         }
     }
 }
