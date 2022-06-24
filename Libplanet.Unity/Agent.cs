@@ -15,8 +15,7 @@ using NetMQ;
 namespace Libplanet.Unity
 {
     /// <summary>
-    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
-    /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
+    /// Agent configure and manage <see cref="Miner"/>, <see cref="SwarmRunner"/> and <see cref="ActionWorker"/>
     /// </summary>
     public class Agent
     {
@@ -43,17 +42,17 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
-        /// T.
+        /// Configured <see cref="Miner"/> It can be use coroutine.
         /// </summary>
         public Miner Miner { get; private set; }
 
         /// <summary>
-        /// T.
+        /// Configured <see cref="SwarmRunner"/> It can be use coroutine.
         /// </summary>
         public SwarmRunner SwarmRunner { get; private set; }
 
         /// <summary>
-        /// T.
+        /// Configured <see cref="ActionWorker"/> It can be use coroutine.
         /// </summary>
         public ActionWorker ActionWorker { get; private set; }
 
