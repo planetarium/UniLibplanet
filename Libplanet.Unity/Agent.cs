@@ -1,4 +1,5 @@
 #nullable disable
+using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -17,17 +18,44 @@ namespace Libplanet.Unity
     /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
     /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
     /// </summary>
-    public class Agent : MonoSingleton<Agent>
+    public class Agent
     {
-        private Miner _miner;
+        private static readonly Lazy<Agent> Lazy =
+                new Lazy<Agent>(() => new Agent());
 
         private Swarm<PolymorphicAction<ActionBase>> _swarm;
 
-        private SwarmRunner _swarmRunner;
-
-        private ActionWorker _actionWorker;
-
         private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
+
+        private Agent()
+        {
+        }
+
+        /// <summary>
+        /// The singleton instance of <see cref="Agent"/>.
+        /// </summary>
+        public static Agent Instance
+        {
+            get
+            {
+                return Lazy.Value;
+            }
+        }
+
+        /// <summary>
+        /// T.
+        /// </summary>
+        public Miner Miner { get; private set; }
+
+        /// <summary>
+        /// T.
+        /// </summary>
+        public SwarmRunner SwarmRunner { get; private set; }
+
+        /// <summary>
+        /// T.
+        /// </summary>
+        public ActionWorker ActionWorker { get; private set; }
 
         /// <summary>
         /// Address of the <see cref="PrivateKey"/>.
@@ -35,20 +63,6 @@ namespace Libplanet.Unity
         public Address Address { get; private set; }
 
         private PrivateKey PrivateKey { get; set; }
-
-        /// <summary>
-        /// Initialize Agent.
-        /// Because it is <see cref="MonoSingleton{T}"/>, use Initialize instead of constructor.
-        /// </summary>
-        /// <param name="renderers">Listener to check status.</param>
-        public static void Initialize(
-            IEnumerable<IRenderer<PolymorphicAction<ActionBase>>> renderers)
-        {
-            if (Instance is { } instance)
-            {
-                instance.InitAgent(renderers);
-            }
-        }
 
         /// <summary>
         /// Returns the state of <paramref name="address"/> for the current
@@ -78,23 +92,23 @@ namespace Libplanet.Unity
         /// <summary>
         /// Dispose <see cref="Swarm{T}"/> and <see cref="NetMQConfig"/> clean up.
         /// </summary>
-        protected override void OnDestroy()
+        public void Cleanup()
         {
             NetMQConfig.Cleanup(false);
-
-            base.OnDestroy();
             _swarm?.Dispose();
         }
 
-        private void InitAgent(
+        /// <summary>
+        /// Initialize Agent.
+        /// </summary>
+        /// <param name="renderers">Listener to check status.</param>
+        public void Initialize(
             IEnumerable<IRenderer<PolymorphicAction<ActionBase>>> renderers)
         {
             ConfigureKeys();
             ConfigureNode(renderers);
             ConfigureMiner();
             ConfigureActionWorker();
-
-            StartCoroutines();
         }
 
         private void ConfigureKeys()
@@ -122,30 +136,23 @@ namespace Libplanet.Unity
                 stateStore,
                 renderers);
             _swarm = nodeConfig.GetSwarm();
-            _swarmRunner = new SwarmRunner(_swarm, PrivateKey);
+            SwarmRunner = new SwarmRunner(_swarm, PrivateKey);
 
             _blockChain = _swarm.BlockChain;
         }
 
         private void ConfigureMiner()
         {
-            _miner = new Miner(
+            Miner = new Miner(
                 _swarm,
                 PrivateKey);
         }
 
         private void ConfigureActionWorker()
         {
-            _actionWorker = new ActionWorker(
+            ActionWorker = new ActionWorker(
                 _swarm,
                 PrivateKey);
-        }
-
-        private void StartCoroutines()
-        {
-            StartCoroutine(_swarmRunner.CoSwarmRunner());
-            StartCoroutine(_miner.CoStart());
-            StartCoroutine(_actionWorker.CoProcessActions());
         }
     }
 }
