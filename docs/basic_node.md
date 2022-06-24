@@ -6,6 +6,7 @@ In this section, we will create a simple application that does the following:
 - As the node mines and appends `Block`s, show ths changes in the blockchain's
   tip[^1].
 
+
 ## Creating a Unity Project
 
 First and foremost, install [Unity Hub] first[^2].  Once finished,
@@ -16,6 +17,7 @@ select `2D Core`, select a location to save your project, and name it `Clicker`.
 Once everything is set up, click on `Create Project` and wait for
 Unity Editor window to show up.
 
+
 ## Importing [UniLibplanet] Unity Package
 
 Download the latest [UniLibplanet.unitypackage][UniLibplanet releases] from
@@ -23,6 +25,7 @@ the [UniLibplanet] [GitHub] repository.  From Unity Editor,
 select `Assets` → `Import Package` → `Custom Pakcage` from the top menu
 and select the downloaded [UniLibplanet.unitypackage] file.  Confirm with
 `Import` to import everything.
+
 
 ## Basic UI
 

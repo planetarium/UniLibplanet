@@ -1,7 +1,7 @@
 # Click Counter
 
 Now that we know how to run a basic blockchain node, in this part
-of the tutorial, we add an interactive element to the application.
+of the tutorial, we add an interactive element to the application:
 
 - Count the number of times `Button` is pressed every cycle that is
   3 seconds long.
