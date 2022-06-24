@@ -78,9 +78,9 @@ namespace Libplanet.Unity
 
         /// <summary>
         /// Creates a <see cref="Transaction{T}"/> with <paramref name="actions"/>
-        /// Just use <see cref="ActionWorker"/> MakeTransaction
+        /// Just use <see cref="ActionWorker"/> MakeTransaction.
         /// </summary>
-        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/></param>
+        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/>.</param>
         public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
         {
             _actionWorker.MakeTransaction(actions);
@@ -142,7 +142,9 @@ namespace Libplanet.Unity
                 stateStore,
                 renderers);
             _swarm = nodeConfig.GetSwarm();
-            _swarmRunner = new SwarmRunner(_swarm, PrivateKey);
+            _swarmRunner = new SwarmRunner(
+                _swarm,
+                PrivateKey);
 
             _blockChain = _swarm.BlockChain;
         }
