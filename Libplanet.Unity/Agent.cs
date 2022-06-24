@@ -1,6 +1,9 @@
 #nullable disable
-using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -10,51 +13,28 @@ using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Node;
 using Libplanet.Store;
+using Libplanet.Tx;
 using NetMQ;
+using UnityEngine;
 
 namespace Libplanet.Unity
 {
     /// <summary>
-    /// Agent configure and manage <see cref="Miner"/>, <see cref="SwarmRunner"/> and <see cref="ActionWorker"/>
+    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
+    /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
     /// </summary>
-    public class Agent
+    public class Agent : MonoSingleton<Agent>
     {
-        private static readonly Lazy<Agent> Lazy =
-                new Lazy<Agent>(() => new Agent());
+        private readonly ConcurrentQueue<System.Action> _actions =
+            new ConcurrentQueue<System.Action>();
+
+        private Miner _miner;
 
         private Swarm<PolymorphicAction<ActionBase>> _swarm;
 
+        private SwarmRunner _swarmRunner;
+
         private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
-
-        private Agent()
-        {
-        }
-
-        /// <summary>
-        /// The singleton instance of <see cref="Agent"/>.
-        /// </summary>
-        public static Agent Instance
-        {
-            get
-            {
-                return Lazy.Value;
-            }
-        }
-
-        /// <summary>
-        /// Configured <see cref="Miner"/> It can be use coroutine.
-        /// </summary>
-        public Miner Miner { get; private set; }
-
-        /// <summary>
-        /// Configured <see cref="SwarmRunner"/> It can be use coroutine.
-        /// </summary>
-        public SwarmRunner SwarmRunner { get; private set; }
-
-        /// <summary>
-        /// Configured <see cref="ActionWorker"/> It can be use coroutine.
-        /// </summary>
-        public ActionWorker ActionWorker { get; private set; }
 
         /// <summary>
         /// Address of the <see cref="PrivateKey"/>.
@@ -64,50 +44,68 @@ namespace Libplanet.Unity
         private PrivateKey PrivateKey { get; set; }
 
         /// <summary>
-        /// Returns the state of <paramref name="address"/> for the current
-        /// <see cref="BlockChain{T}.Tip"/>.
+        /// Initialize Agent.
+        /// Because it is <see cref="MonoSingleton{T}"/>, use Initialize instead of constructor.
         /// </summary>
-        /// <param name="address">The <see cref="Address"/> to look up.</param>
-        /// <returns>The state of <paramref name="address"/> at <see cref="BlockChain{T}.Tip"/>.
-        /// This can be <see langword="null"/> if <paramref name="address"/>
-        /// has no value.</returns>
-        public IValue GetState(Address address) => GetState(address, _blockChain.Tip.Hash);
+        /// <param name="renderers">Listener to check status.</param>
+        public static void Initialize(
+            IEnumerable<IRenderer<PolymorphicAction<ActionBase>>> renderers)
+        {
+            if (Instance is { } instance)
+            {
+                instance.InitAgent(renderers);
+            }
+        }
 
         /// <summary>
-        /// Returns the state of <paramref name="address"/> for <paramref name="blockHash"/>
-        /// <see cref="Block{T}"/>.
+        /// Returns the status of the current <see cref="BlockChain{T}"/>.
         /// </summary>
-        /// <param name="address">The <see cref="Address"/> to look up.</param>
-        /// <param name="blockHash">The <see cref="BlockHash"/> of the <see cref="Block{T}"/>
-        /// to look up.</param>
-        /// <returns>The state of <paramref name="address"/> at <paramref name="blockHash"/>.
-        /// This can be <see langword="null"/> if <paramref name="address"/>
-        /// has no value.</returns>
-        public IValue GetState(Address address, BlockHash blockHash)
+        /// <param name="address"><see cref="Address"/> to be use.</param>
+        /// <returns>This can be <c>null</c>.</returns>
+        public IValue GetState(Address address)
         {
-            return _blockChain.GetState(address, blockHash);
+            return _blockChain.GetState(address);
+        }
+
+        /// <summary>
+        /// Stage the action transactions.
+        /// </summary>
+        /// <param name="gameActions"><see cref="Action"/> list to be use.</param>
+        public void MakeTransaction(IEnumerable<ActionBase> gameActions)
+        {
+            var actions = gameActions.Select(
+                gameAction => (PolymorphicAction<ActionBase>)gameAction).ToList();
+            Task.Run(() => MakeTransaction(actions, true));
+        }
+
+        /// <summary>
+        /// Append action.
+        /// </summary>
+        /// <param name="action"><see cref="Action"/> to be use.</param>
+        public void RunOnMainThread(System.Action action)
+        {
+            _actions.Enqueue(action);
         }
 
         /// <summary>
         /// Dispose <see cref="Swarm{T}"/> and <see cref="NetMQConfig"/> clean up.
         /// </summary>
-        public void Cleanup()
+        protected override void OnDestroy()
         {
             NetMQConfig.Cleanup(false);
+
+            base.OnDestroy();
             _swarm?.Dispose();
         }
 
-        /// <summary>
-        /// Initialize Agent.
-        /// </summary>
-        /// <param name="renderers">Listener to check status.</param>
-        public void Initialize(
+        private void InitAgent(
             IEnumerable<IRenderer<PolymorphicAction<ActionBase>>> renderers)
         {
             ConfigureKeys();
             ConfigureNode(renderers);
             ConfigureMiner();
-            ConfigureActionWorker();
+
+            StartCoroutines();
         }
 
         private void ConfigureKeys()
@@ -135,23 +133,46 @@ namespace Libplanet.Unity
                 stateStore,
                 renderers);
             _swarm = nodeConfig.GetSwarm();
-            SwarmRunner = new SwarmRunner(_swarm, PrivateKey);
+            _swarmRunner = new SwarmRunner(_swarm, PrivateKey);
 
             _blockChain = _swarm.BlockChain;
         }
 
         private void ConfigureMiner()
         {
-            Miner = new Miner(
+            _miner = new Miner(
                 _swarm,
                 PrivateKey);
         }
 
-        private void ConfigureActionWorker()
+        private void StartCoroutines()
         {
-            ActionWorker = new ActionWorker(
-                _swarm,
-                PrivateKey);
+            StartCoroutine(_swarmRunner.CoSwarmRunner());
+            StartCoroutine(_miner.CoStart());
+            StartCoroutine(CoProcessActions());
+        }
+
+        private IEnumerator CoProcessActions()
+        {
+            while (true)
+            {
+                if (_actions.TryDequeue(out System.Action action))
+                {
+                    action();
+                }
+
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        private Transaction<PolymorphicAction<ActionBase>> MakeTransaction(
+                    IEnumerable<PolymorphicAction<ActionBase>> actions, bool broadcast)
+        {
+            var polymorphicActions = actions.ToArray();
+            Debug.LogFormat(
+                "Make Transaction with Actions: `{0}`",
+                string.Join(",", polymorphicActions.Select(i => i.InnerAction)));
+            return _blockChain.MakeTransaction(PrivateKey, polymorphicActions);
         }
     }
 }
