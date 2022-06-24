@@ -1,9 +1,5 @@
 #nullable disable
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -15,24 +11,22 @@ using Libplanet.Node;
 using Libplanet.Store;
 using Libplanet.Tx;
 using NetMQ;
-using UnityEngine;
 
 namespace Libplanet.Unity
 {
     /// <summary>
-    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
+    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and <see cref="ActionWorker"/>
     /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
     /// </summary>
     public class Agent : MonoSingleton<Agent>
     {
-        private readonly ConcurrentQueue<System.Action> _actions =
-            new ConcurrentQueue<System.Action>();
-
         private Miner _miner;
 
         private Swarm<PolymorphicAction<ActionBase>> _swarm;
 
         private SwarmRunner _swarmRunner;
+
+        private ActionWorker _actionWorker;
 
         private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
 
@@ -84,28 +78,21 @@ namespace Libplanet.Unity
 
         /// <summary>
         /// Creates a <see cref="Transaction{T}"/> with <paramref name="actions"/>
-        /// that can be mined by a <see cref="BlockChain{T}"/>.
+        /// Just use <see cref="ActionWorker"/> MakeTransaction
         /// </summary>
-        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/>
-        /// to include in a newly created <see cref="Transaction{T}"/>.</param>
+        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/></param>
         public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
         {
-            Task.Run(() =>
-            {
-                Debug.LogFormat(
-                    "Make Transaction with Actions: {0}",
-                    string.Join(", ", actions.Select(i => i.InnerAction)));
-                _blockChain.MakeTransaction(PrivateKey, actions.ToList());
-            });
+            _actionWorker.MakeTransaction(actions);
         }
 
         /// <summary>
-        /// Append action.
+        /// Append action in <see cref="ActionWorker"/>.
         /// </summary>
         /// <param name="action"><see cref="Action"/> to be use.</param>
         public void RunOnMainThread(System.Action action)
         {
-            _actions.Enqueue(action);
+            _actionWorker.RunOnMainThread(action);
         }
 
         /// <summary>
@@ -125,6 +112,7 @@ namespace Libplanet.Unity
             ConfigureKeys();
             ConfigureNode(renderers);
             ConfigureMiner();
+            ConfigureActionWorker();
 
             StartCoroutines();
         }
@@ -166,24 +154,18 @@ namespace Libplanet.Unity
                 PrivateKey);
         }
 
+        private void ConfigureActionWorker()
+        {
+            _actionWorker = new ActionWorker(
+                _swarm,
+                PrivateKey);
+        }
+
         private void StartCoroutines()
         {
             StartCoroutine(_swarmRunner.CoSwarmRunner());
             StartCoroutine(_miner.CoStart());
-            StartCoroutine(CoProcessActions());
-        }
-
-        private IEnumerator CoProcessActions()
-        {
-            while (true)
-            {
-                if (_actions.TryDequeue(out System.Action action))
-                {
-                    action();
-                }
-
-                yield return new WaitForSeconds(0.1f);
-            }
+            StartCoroutine(_actionWorker.CoProcessActions());
         }
     }
 }
