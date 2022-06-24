@@ -9,12 +9,13 @@ using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Node;
 using Libplanet.Store;
+using Libplanet.Tx;
 using NetMQ;
 
 namespace Libplanet.Unity
 {
     /// <summary>
-    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
+    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and <see cref="ActionWorker"/>
     /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
     /// </summary>
     public class Agent : MonoSingleton<Agent>
@@ -73,6 +74,25 @@ namespace Libplanet.Unity
         public IValue GetState(Address address, BlockHash blockHash)
         {
             return _blockChain.GetState(address, blockHash);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Transaction{T}"/> with <paramref name="actions"/>
+        /// Just use <see cref="ActionWorker"/> MakeTransaction
+        /// </summary>
+        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/></param>
+        public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
+        {
+            _actionWorker.MakeTransaction(actions);
+        }
+
+        /// <summary>
+        /// Append action in <see cref="ActionWorker"/>.
+        /// </summary>
+        /// <param name="action"><see cref="Action"/> to be use.</param>
+        public void RunOnMainThread(System.Action action)
+        {
+            _actionWorker.RunOnMainThread(action);
         }
 
         /// <summary>
@@ -145,24 +165,7 @@ namespace Libplanet.Unity
         {
             StartCoroutine(_swarmRunner.CoSwarmRunner());
             StartCoroutine(_miner.CoStart());
-<<<<<<< HEAD
-            StartCoroutine(CoProcessActions());
-        }
-
-        private IEnumerator CoProcessActions()
-        {
-            while (true)
-            {
-                if (_actions.TryDequeue(out System.Action action))
-                {
-                    action();
-                }
-
-                yield return new WaitForSeconds(0.1f);
-            }
-=======
             StartCoroutine(_actionWorker.CoProcessActions());
->>>>>>> f8b5445 (Apply ActionWorker)
         }
     }
 }
