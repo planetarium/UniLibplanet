@@ -21,7 +21,7 @@ public static class PackageExporter
 
         if (!File.Exists(Path.Combine(PluginsPath, "Libplanet.Unity.dll")))
         {
-            Debug.Log("First, please build Libplanet.Unity.");
+            Debug.LogError("First, please build Libplanet.Unity.");
             return;
         }
 
