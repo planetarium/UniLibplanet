@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Libplanet.Unity</PackageId>
-    <PackageProjectUrl>https://libplanet.io/</PackageProjectUrl>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/planetarium/UniLibplanet</PackageProjectUrl>
     <Authors>Planetarium</Authors>
     <Company>Planetarium</Company>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
-    <PackageReleaseNotes>https://github.com/planetarium/libplanet/blob/main/CHANGES.md</PackageReleaseNotes>
-    <PackageTags>multiplayer online game;game;blockchain</PackageTags>
-    <RepositoryUrl>https://github.com/planetarium/libplanet.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/planetarium/UniLibplanet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
@@ -36,9 +33,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\libplanet\LICENSE" Pack="true" PackagePath="LICENSE.txt" />
-    <None Include="..\libplanet\README.md" Pack="true" PackagePath="README.md" />
-    <None Include="..\libplanet\icon.png" Pack="true" PackagePath="icon.png" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="LICENSE.txt" />
+    <None Include="..\README.md" Pack="true" PackagePath="README.md" />
     <AdditionalFiles Include="..\libplanet\Menees.Analyzers.Settings.xml">
       <Link>Menees.Analyzers.Settings.xml</Link>
     </AdditionalFiles>
