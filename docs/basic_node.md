@@ -37,6 +37,15 @@ the blockchain in real time.  For this, we create the following UI components:
 - Text showing the `Hash` of the blockchain's tip.
 - Text showing the `Index` of the blockchain's tip.
 
+### Running in Background
+
+As a blockchain node, we need to make sure that the application isn't paused
+while in background.  Otherwise, UI update together with mining and/or block
+syncing process will be hang when the application window is not in focus,
+and generally this is not how we would want a blockchain node to behave.
+Under the Unity Editor's menu, navigate to `Edit` → `Project Settings`
+→ `Player` and make sure `Run In Background` option is enabled.
+
 ### Creating a Scene
 
 Perform the following step by step in Unity Editor:

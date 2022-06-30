@@ -1,8 +1,8 @@
 # Scoreboard
 
-So far, all we have done is write an encoded `int` value at some `Address`,
+So far, all we have done is write an encoded `int` value to some `Address`,
 namely the user's `Address`, on a blockchain.  As a node only knows about
-its own address, if we would want to see the states stored at other
+its own `Address`, if we would want to see the states stored at some other
 node's `Address`, we need to keep track of it somehow.  Although
 every blockchain keeps a complete historical data, scouring the entire
 blockchain would be very inefficient.  Hence, in this section, we create
