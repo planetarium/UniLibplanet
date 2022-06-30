@@ -1,10 +1,10 @@
+using System;
 using System.IO;
 using Libplanet.Action;
 using Libplanet.Blocks;
 using Libplanet.Crypto;
 using Libplanet.Node;
 using Libplanet.Store;
-using Libplanet.Unity;
 
 namespace Libplanet.Unity
 {
@@ -118,7 +118,8 @@ namespace Libplanet.Unity
         /// </remarks>
         public static (IStore Store, IStateStore StateStore) LoadStore(string path)
         {
-            return NodeUtils<PolymorphicAction<ActionBase>>.LoadStore(path);
+            Uri uri = new Uri($"rocksdb+file://{path}");
+            return NodeUtils<PolymorphicAction<ActionBase>>.LoadStore(uri);
         }
     }
 }
