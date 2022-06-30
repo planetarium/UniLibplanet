@@ -1,16 +1,22 @@
 $DOTENV_PATH = ".\.env.xml"
 
 function Get-Unity-Paths {
-    return @(Get-ChildItem -Path "\Program Files\Unity" -Filter "Unity.exe" -Recurse)
+    return @(Get-ChildItem -Path "$env:ProgramFiles\Unity" -Filter "Unity.exe" -Recurse)
 }
 
-function Select-Unity-Path ($paths) {
+function Select-Unity-Path() {
+    [OutputType([string])]
+    param (
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileSystemInfo[]]
+        $paths
+    )
     $caption = "Unity Editor versions found"
     $i = 0
     $list = ""
     foreach ($path in $paths) {
         $i++
-        $list = $list + "$i - $path" + [Environment]::NewLine
+        $list = $list + "$i - $($path.FullName)" + [Environment]::NewLine
     }
 
     $message = @"
@@ -31,8 +37,8 @@ $list
         Write-Host "Terminating..."
         exit
     }
-    Write-Host "$($paths[$choice]) selected"
-    return Split-Path -Path $paths[$choice]
+    Write-Host "$($paths[$choice].FullName) selected"
+    return "$($paths[$choice].DirectoryName)"
 }
 
 function Write-Env ($content) {
