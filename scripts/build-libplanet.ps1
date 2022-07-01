@@ -4,6 +4,7 @@ $PLUGINS_DIR = ".\UniLibplanet\Assets\Plugins\"
 $EXCLUDES = @("Microsoft.CSharp.dll", "System.ServiceModel.Primitives.dll", "Unity*.dll")
 $ARTIFACT_DIRS = @(".\Libplanet.Unity\bin\", ".\Libplanet.Unity\obj\")
 
+Push-Location (Split-Path -Parent $PSScriptRoot)
 Write-Host "Starting DLL build..."
 & dotnet build $LIBPLANET_UNITY_DIR --configuration Release
 
@@ -20,3 +21,4 @@ Copy-Item -Path $DLLS_DIR -Exclude $EXCLUDES -Destination $PLUGINS_DIR
 
 Write-Host "Removing artifacts..."
 Remove-Item -Path $ARTIFACT_DIRS -Recurse
+Pop-Location

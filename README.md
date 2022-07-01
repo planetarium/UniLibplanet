@@ -2,7 +2,7 @@
 `UniLibplanet` is a `Libplanet` Extensions for Unity.
 
 # Usage
-`UniLibplanet` is Unity SDK 2021.3.0f1.
+`UniLibplanet` requires Unity SDK 2021.3.0f1.
 You can download SDK Files in [Releases](https://github.com/planetarium/UniLibplanet/releases)
 
 # Tutorial

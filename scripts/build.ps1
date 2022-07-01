@@ -1,2 +1,2 @@
-& ".\scripts\build-libplanet.ps1"
-& ".\scripts\build-unity.ps1"
+& "$PSScriptRoot\build-libplanet.ps1"
+& "$PSScriptRoot\build-unity.ps1"
