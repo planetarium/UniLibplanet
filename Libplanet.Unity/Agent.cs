@@ -1,8 +1,6 @@
 #nullable disable
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -14,6 +12,7 @@ using Libplanet.Node;
 using Libplanet.Store;
 using Libplanet.Tx;
 using NetMQ;
+using UnityEngine;
 
 namespace Libplanet.Unity
 {
@@ -167,9 +166,7 @@ namespace Libplanet.Unity
                 stateStore,
                 renderers);
             _swarm = nodeConfig.GetSwarm();
-            _swarmRunner = new SwarmRunner(
-                _swarm,
-                PrivateKey);
+            _swarmRunner = new SwarmRunner(_swarm, PrivateKey);
 
             _blockChain = _swarm.BlockChain;
         }

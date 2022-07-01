@@ -71,7 +71,7 @@ namespace Libplanet.Unity
         /// Append action.
         /// </summary>
         /// <returns>This can be <c>null</c>.</returns>
-        public IEnumerator CoStart()
+        public IEnumerator CoProcessActions()
         {
             while (true)
             {
@@ -79,6 +79,8 @@ namespace Libplanet.Unity
                 {
                     action();
                 }
+
+                yield return new WaitForSeconds(0.1f);
             }
         }
     }
