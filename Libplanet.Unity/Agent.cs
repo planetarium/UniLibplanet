@@ -1,6 +1,4 @@
 #nullable disable
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,12 +14,11 @@ using Libplanet.Node;
 using Libplanet.Store;
 using Libplanet.Tx;
 using NetMQ;
-using UnityEngine;
 
 namespace Libplanet.Unity
 {
     /// <summary>
-    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and Action Controller
+    /// Agent runs <see cref="Miner"/>, <see cref="SwarmRunner"/> and <see cref="ActionWorker"/>
     /// You can use <c>RunOnMainThread</c>, <c>MakeTransaction</c> to manage actions.
     /// </summary>
     [SuppressMessage(
@@ -30,9 +27,6 @@ namespace Libplanet.Unity
         Justification = "It's only instantiated by GameObject.AddComponent<T>() method.")]
     public class Agent : MonoBehaviour
     {
-        private readonly ConcurrentQueue<System.Action> _actions =
-            new ConcurrentQueue<System.Action>();
-
         private Miner _miner;
         private Coroutine _minerCo;
 
@@ -41,8 +35,10 @@ namespace Libplanet.Unity
         private SwarmRunner _swarmRunner;
         private Coroutine _swarmRunnerCo;
 
-        private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
+        private ActionWorker _actionWorker;
         private Coroutine _processActionsCo;
+
+        private BlockChain<PolymorphicAction<ActionBase>> _blockChain;
 
         /// <summary>
         /// Use <see cref="AddComponentTo"/> instead.
@@ -78,6 +74,7 @@ namespace Libplanet.Unity
 
             self.ConfigureNode(renderers);
             self._miner = new Miner(self._swarm, self.PrivateKey);
+            self._actionWorker = new ActionWorker(self._swarm, self.PrivateKey);
             return self;
         }
 
@@ -108,28 +105,21 @@ namespace Libplanet.Unity
 
         /// <summary>
         /// Creates a <see cref="Transaction{T}"/> with <paramref name="actions"/>
-        /// that can be mined by a <see cref="BlockChain{T}"/>.
+        /// Just use <see cref="ActionWorker"/> MakeTransaction.
         /// </summary>
-        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/>
-        /// to include in a newly created <see cref="Transaction{T}"/>.</param>
+        /// <param name="actions">The list of <see cref="PolymorphicAction{ActionBase}"/>.</param>
         public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
         {
-            Task.Run(() =>
-            {
-                Debug.LogFormat(
-                    "Make Transaction with Actions: {0}",
-                    string.Join(", ", actions.Select(i => i.InnerAction)));
-                _blockChain.MakeTransaction(PrivateKey, actions.ToList());
-            });
+            _actionWorker.MakeTransaction(actions);
         }
 
         /// <summary>
-        /// Append action.
+        /// Append action in <see cref="ActionWorker"/>.
         /// </summary>
         /// <param name="action"><see cref="Action"/> to be use.</param>
         public void RunOnMainThread(System.Action action)
         {
-            _actions.Enqueue(action);
+            _actionWorker.Append(action);
         }
 
         /// <summary>
@@ -145,7 +135,7 @@ namespace Libplanet.Unity
         {
             _swarmRunnerCo = StartCoroutine(_swarmRunner.CoSwarmRunner());
             _minerCo = StartCoroutine(_miner.CoStart());
-            _processActionsCo = StartCoroutine(CoProcessActions());
+            _processActionsCo = StartCoroutine(_actionWorker.CoProcessActions());
         }
 
         private void OnApplicationQuit()
@@ -177,22 +167,11 @@ namespace Libplanet.Unity
                 stateStore,
                 renderers);
             _swarm = nodeConfig.GetSwarm();
-            _swarmRunner = new SwarmRunner(_swarm, PrivateKey);
+            _swarmRunner = new SwarmRunner(
+                _swarm,
+                PrivateKey);
 
             _blockChain = _swarm.BlockChain;
-        }
-
-        private IEnumerator CoProcessActions()
-        {
-            while (true)
-            {
-                if (_actions.TryDequeue(out System.Action action))
-                {
-                    action();
-                }
-
-                yield return new WaitForSeconds(0.1f);
-            }
         }
     }
 }

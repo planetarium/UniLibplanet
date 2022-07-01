@@ -46,7 +46,7 @@ namespace Libplanet.Unity
         {
             while (true)
             {
-                var task = Mine();
+                var task = Task.Run(async () => await Mine());
                 yield return new WaitUntil(() => task.IsCompleted);
 
                 if (!task.IsCanceled && !task.IsFaulted)
@@ -65,16 +65,15 @@ namespace Libplanet.Unity
         /// Uses <see cref="BlockChain{T}"/> to implement <see cref="Mine"/>.
         /// </summary>
         /// <returns>An awaitable task with a <see cref="Block{T}"/> that is mined.</returns>
-        public Task<Block<PolymorphicAction<ActionBase>>> Mine()
+        public async Task<Block<PolymorphicAction<ActionBase>>> Mine()
         {
-            var task = Task.Run(async () =>
+            var block = await _swarm.BlockChain.MineBlock(_privateKey);
+            if (_swarm.Running)
             {
-                var block = await _swarm.BlockChain.MineBlock(_privateKey);
                 _swarm.BroadcastBlock(block);
+            }
 
-                return block;
-            });
-            return task;
+            return block;
         }
     }
 }
