@@ -151,8 +151,7 @@ namespace Scripts
             };
 
             // Initialize a Libplanet Unity Agent.
-            Agent.Initialize(_renderers);
-            _agent = Agent.Instance;
+            _agent = Agent.AddComponentTo(gameObject, _renderers);
 
             // Initialize a Timer.
             _timer = new Timer();
@@ -269,9 +268,9 @@ namespace Scripts.States
         }
 
         // Used for adding `count` to the current state.
-        public void AddCount(long count)
+        public CountState AddCount(long count)
         {
-            Count = Count + count;
+            return new CountState(Count + count);
         }
     }
 }
@@ -280,6 +279,11 @@ namespace Scripts.States
 As all data recorded on blockchain and the state storage in [Bencodex] format,
 the `DataModel` class is there to help with all the heavy lifting of encoding
 and decoding behind the scenes.
+
+Although strictly not necessary, due to distributed nature of blockchain
+technology, it is recommended to use immutability as much as possible since
+it is **extremely hard** to roll back changes if blockchain data gets
+corrupted for whatever reason.
 
 ### Plain value `ClickActionPlainValue`
 
@@ -379,7 +383,7 @@ namespace Scripts.Actions
 
             // Mutates the loaded state, logs the result, and stores the resulting state.
             long prevCount = countState.Count;
-            countState.AddCount(_plainValue.Count);
+            countState = countState.AddCount(_plainValue.Count);
             long nextCount = countState.Count;
             Debug.Log($"click_action: PrevCount: {prevCount}, NextCount: {nextCount}");
             return states.SetState(context.Signer, countState.Encode());
@@ -480,18 +484,14 @@ namespace Scripts
                         // Invoke the event handler only if the state is updated.
                         if (nextStates.GetState(context.Signer) is Bencodex.Types.Dictionary bdict)
                         {
-                            Agent.Instance.RunOnMainThread(() =>
-                            {
-                                _totalCountUpdatedEvent.Invoke(new CountState(bdict));
-                            });
+                            _totalCountUpdatedEvent.Invoke(new CountState(bdict));
                         }
                     }
                 }
             };
 
             // Initialize a Libplanet Unity Agent.
-            Agent.Initialize(_renderers);
-            _agent = Agent.Instance;
+            _agent = Agent.AddComponentTo(gameObject, _renderers);
 
             // Initialize a Timer.
             _timer = new Timer();
