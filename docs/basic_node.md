@@ -1,6 +1,7 @@
 # Basic Node
 
-In this section, we will create a simple application that does the following:
+In this section, we will create a simple [Unity] application that
+does the following:
 
 - Run a local blockchain node.
 - As the node mines and appends `Block`s, show ths changes in the blockchain's
@@ -41,7 +42,7 @@ the blockchain in real time.  For this, we create the following UI components:
 
 As a blockchain node, we need to make sure that the application isn't paused
 while in background.  Otherwise, UI update together with mining and/or block
-syncing process will be hang when the application window is not in focus,
+syncing process will hang when the application window is not in focus,
 and generally this is not how we would want a blockchain node to behave.
 Under the Unity Editor's menu, navigate to `Edit` → `Project Settings`
 → `Player` and make sure `Run In Background` option is enabled.
@@ -56,6 +57,9 @@ Perform the following step by step in Unity Editor:
     Rename `SampleScene` to `Game`.
   - Double click on the `Game` scene to activate it.  Once
     activated, `Game` should show inside the **Hierarchy** panel.
+- Change the background color:
+  - Select `Main Camera` and inside the **Inspector** panel, change
+    the background color to something lighter as texts will be in black.
 - Create a new canvas:
   - Right click on `Game` inside the **Hierarchy** panel and select
     `GameObject` → `UI` → `Canvas`.
@@ -196,8 +200,7 @@ namespace Scripts
             };
 
             // Initialize a Libplanet Unity Agent.
-            Agent.Initialize(_renderers);
-            _agent = Agent.Instance;
+            _agent = Agent.AddComponentTo(gameObject, _renderers);
         }
 
         // Unity MonoBehaviour Start().
@@ -240,9 +243,9 @@ BlockRenderer = (oldTip, newTip) =>
 where it is picked up by `UpdateBlockTexts()` method as it was added as
 a listener to `_blockUpdatedEvent` in the previous part of the code.
 
-For now, just note `Agent` is simply a singleton wrapper class for handling
-a [Libplanet] blockchain node.  Also don't worry about
-`PolymorphicAction<ActionBase>` for now.  This will be explained further later.
+For now, just note `Agent` is simply a wrapper class for handling a [Libplanet]
+blockchain node.  Also don't worry about `PolymorphicAction<ActionBase>`
+for now.  This will be explained further later.
 
 
 ## Running a Blockchain Node
@@ -276,16 +279,17 @@ the blockchain will adjust accordingly and slow down.
 
 ### Footnotes
 
-[^3]: The tip of a blockchain is a `Block` with the highest `Index`.
+[^1]: The tip of a blockchain is a `Block` with the highest `Index`.
 
-[^1]: This tutorial is written with [Unity Hub] 3.1.2.
+[^2]: This tutorial is written with [Unity Hub] 3.1.2.
 
-[^2]: At this moment, only Unity Editor version 2021.3.0f1 is supported.
+[^3]: At this moment, only Unity Editor version 2021.3.0f1 is supported.
 
 <!-- links -->
 
 [GitHub]: https://github.com/
 [Libplanet]: https://github.com/planetarium/libplanet
+[Unity]: https://unity.com/
 [Unity Hub]: https://unity3d.com/get-unity/download
 [UniLibplanet]: https://github.com/planetarium/UniLibplanet
 [UniLibplanet releases]: https://github.com/planetarium/UniLibplanet/releases
