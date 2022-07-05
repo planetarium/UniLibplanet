@@ -21,8 +21,9 @@ A seed node of a network is a node that can act as an entry point for such
 other node that is trying to join the network.  In general, this information
 needs to be known before the application is distributed.
 
-For this, we will make a setup so that the client binary on the computer
-that you have been using to develop will be running as a seed node.
+For this, we will setup a blockchain network in such a way that the client
+binary on the computer that you have been using to develop the `Clicker`
+application will be running as a seed node.
 
 ### Generate `BoundPeer` String
 
@@ -82,7 +83,7 @@ that of the `BoundPeer` string.
 ```
 
 Edit `Node B`'s `swarm_config.json` to match its local IP address,
-say `192.168.1.234`, and use the same port as that of `Node A`'s[^1].
+say `192.168.1.234`, and use the same port as that of `Node A`'s[^2].
 
 ```json
 "Host": "192.168.1.234",
@@ -101,8 +102,7 @@ private key.
 
 Create a new file named `private_key` anywhere on your computer and copy-paste
 the private key string into the file and save.  Move the `private_key` file
-just created to `Node B` computer under
-`%APPDATA%/../LocalLow/DefaultCompany/Clicker`.
+just created to `Node B` under `%APPDATA%/../LocalLow/DefaultCompany/Clicker`.
 
 In a production environment, you might want to make it so that the game client
 and/or its launcher provide a way to automate this process.
@@ -123,7 +123,12 @@ reflect the counts from both nodes!
 
 ### Footnotes
 
-[^1]: Technically, for any non-seed node, any usable port is fine, as the node
+[^1]: As with any computer program, it is not unreasonable to expect there
+      to be some unexpected down time for any node.  Therefore, it is
+      recommended to have multiple seed nodes ready for a production
+      environment.
+
+[^2]: Technically, for any non-seed node, any usable port is fine, as the node
       will be announcing its listening port.  This is not the case for seed
       nodes, as other non-seed nodes need to have a **fixed point of entry**
       to the blockchain network.
@@ -131,5 +136,6 @@ reflect the counts from both nodes!
 
 <!-- links -->
 
+[Libplanet]: https://github.com/planetarium/libplanet
 [UniLibplanet]: https://github.com/planetarium/UniLibplanet
 [Basic Node]: ./basic_node.md
