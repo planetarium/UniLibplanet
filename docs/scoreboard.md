@@ -25,7 +25,7 @@ Open up the `Game.cs` file, and add to the `Game` class a field
 named `ScoreBoardText`:
 
 ```csharp
-public Text ScoreBoardText
+public Text ScoreBoardText;
 ```
 
 Also add a placeholder initial text assignment inside the `Start()` method:
@@ -63,7 +63,8 @@ namespace Scripts.States
         public static readonly Address Address = new Address(
             new byte[]
             {
-                0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1
+                0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+                0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1,
             });
 
         // To enforce a state change.  As this class only tracks addresses,
@@ -81,6 +82,12 @@ namespace Scripts.States
             Participants = ImmutableList<Address>.Empty;
         }
 
+        public ScoreBoardState(long nonce, ImmutableList<Address> participants)
+        {
+            Nonce = nonce;
+            Participants = participants;
+        }
+
         // Used for deserializing a stored state.
         // This must be declared as base constructor cannot be inherited.
         public ScoreBoardState(Bencodex.Types.Dictionary encoded)
@@ -88,13 +95,11 @@ namespace Scripts.States
         {
         }
 
-        public void UpdateScoreBoard(Address account)
+        public ScoreBoardState UpdateScoreBoard(Address account)
         {
-            if (!Participants.Contains(account))
-            {
-                Participants = Participants.Add(account);
-            }
-            Nonce++;
+            return Participants.Contains(account)
+                ? new ScoreBoardState(Nonce + 1, Participants)
+                : new ScoreBoardState(Nonce + 1, Participants.Add(account));
         }
     }
 }
@@ -106,10 +111,11 @@ are some pros and cons of doing it either way.
 
 As for implementing an action for a scoreboard, as a scoreboard object
 is not an active user per se, but only a simple tracker, it does not make
-much sense to have its own action to change its own state.  We make a change
-to `ClickAction` action so that when executed, it reports to the shared
-`ScoreBoardState` at `ScoreBoardState.Address`.  Open up `ClickAction.cs`
-and update the `Execute()` method as follows:
+much sense to have its own `IAction` to change its own state as `IAction`s are
+meant to be recorded on a blockchain.  We make changes to `ClickAction` action
+so that when executed, it reports to the shared `ScoreBoardState` at
+`ScoreBoardState.Address`.  Open up `ClickAction.cs` and update the `Execute()`
+method as follows:
 
 ```csharp
 // Executes an action.
@@ -126,7 +132,7 @@ public override IAccountStateDelta Execute(IActionContext context)
 
     // Mutates the loaded state, logs the result, and stores the resulting state.
     long prevCount = countState.Count;
-    countState.AddCount(_plainValue.Count);
+    countState = countState.AddCount(_plainValue.Count);
     long nextCount = countState.Count;
     Debug.Log($"click_action: PrevCount: {prevCount}, NextCount: {nextCount}");
 
@@ -135,7 +141,7 @@ public override IAccountStateDelta Execute(IActionContext context)
         states.GetState(ScoreBoardState.Address) is Bencodex.Types.Dictionary scoreBoardStateEncoded
             ? new ScoreBoardState(scoreBoardStateEncoded)
             : new ScoreBoardState();
-    scoreBoardState.UpdateScoreBoard(context.Signer);
+    scoreBoardState = scoreBoardState.UpdateScoreBoard(context.Signer);
 
     return states
         .SetState(ScoreBoardState.Address, scoreBoardState.Encode())
@@ -234,18 +240,14 @@ namespace Scripts
                         // Invoke the event handler only if the state is updated.
                         if (nextStates.GetState(context.Signer) is Bencodex.Types.Dictionary bdict)
                         {
-                            Agent.Instance.RunOnMainThread(() =>
-                            {
-                                _totalCountUpdatedEvent.Invoke(new CountState(bdict));
-                            });
+                            _totalCountUpdatedEvent.Invoke(new CountState(bdict));
                         }
                     }
                 }
             };
 
             // Initialize a Libplanet Unity Agent.
-            Agent.Initialize(_renderers);
-            _agent = Agent.Instance;
+            _agent = Agent.AddComponentTo(gameObject, _renderers);
 
             // Initialize a Timer.
             _timer = new Timer();
@@ -370,12 +372,11 @@ Notable changes are as follows:
 
 You might be wondering why `UpdateScoreBoardText()` is tied to
 `BlockRenderer` and not to `ActionRenderer` above.  This is because
-This is because the context passed on by an `ActionRenderer` does not have
-a sufficient amount of information to recursively search the internal
-state storage.  Note how `tip.Hash` is used when searching for scores.
-By design, due to how an `IAction` is executed on a blockchain, this piece
-of information cannot be retrieved when at the time of execution of
-the `IAction`.
+the context passed on by an `ActionRenderer` does not have a sufficient amount
+of information to recursively search the internal state storage.  Note how
+`tip.Hash` is used when searching for scores.  By design, due to how
+an `IAction` is executed on a blockchain, this piece of information cannot be
+retrieved at the time of execution of an `IAction`[^1].
 
 Test by building and running again.  Even though you might have some click
 counts already stored on your local chain, your `ScoreBoard` might show
@@ -398,3 +399,18 @@ to the previous `Address` is still there, but a new score for the
 new `Address` should also show up on `ScoreBoard`.
 
 ![Scoreboard Running New Key](./assets/images/scoreboard_running_new_key.png)
+
+
+<!-- footnotes -->
+
+----
+
+### Footnotes
+
+[^1]: The `Hash` of a `Block` is only determined after all `IAction`s in
+      the `Block` are executed.
+
+
+<!-- links -->
+
+[Unity]: https://unity.com/
