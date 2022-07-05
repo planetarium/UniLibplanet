@@ -5,7 +5,7 @@
 [UniLibplanet] is [Libplanet] SDK [Unity] package for easily creating
 a blockchain [Unity] application.
 
-## [Tutorial](./tutorial.md)
+## [Tutorials](./tutorials.md)
 
 A small walkthrough for creating a simple blockchain [Unity]
 application.
