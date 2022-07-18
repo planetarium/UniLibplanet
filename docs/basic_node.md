@@ -193,7 +193,7 @@ namespace Scripts
                         // NullReferenceException getting thrown.
                         if (newTip.Index > 0)
                         {
-                            _blockUpdatedEvent.Invoke(newTip);
+                            _agent.RunOnMainThread(() => _blockUpdatedEvent.Invoke(newTip));
                         }
                     }
                 }
@@ -235,7 +235,7 @@ BlockRenderer = (oldTip, newTip) =>
 {
     if (newTip.Index > 0)
     {
-        _blockUpdatedEvent.Invoke(newTip);
+        _agent.RunOnMainThread(() => _blockUpdatedEvent.Invoke(newTip));
     }
 }
 ```

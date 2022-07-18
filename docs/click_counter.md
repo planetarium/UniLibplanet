@@ -144,7 +144,7 @@ namespace Scripts
                         // NullReferenceException getting thrown.
                         if (newTip.Index > 0)
                         {
-                            _blockUpdatedEvent.Invoke(newTip);
+                            _agent.RunOnMainThread(() => _blockUpdatedEvent.Invoke(newTip));
                         }
                     }
                 }
@@ -473,7 +473,7 @@ namespace Scripts
                         // NullReferenceException getting thrown.
                         if (newTip.Index > 0)
                         {
-                            _blockUpdatedEvent.Invoke(newTip);
+                            _agent.RunOnMainThread(() => _blockUpdatedEvent.Invoke(newTip));
                         }
                     }
                 },
@@ -484,7 +484,7 @@ namespace Scripts
                         // Invoke the event handler only if the state is updated.
                         if (nextStates.GetState(context.Signer) is Bencodex.Types.Dictionary bdict)
                         {
-                            _totalCountUpdatedEvent.Invoke(new CountState(bdict));
+                            _agent.RunOnMainThread(() => _totalCountUpdatedEvent.Invoke(new CountState(bdict)));
                         }
                     }
                 }
