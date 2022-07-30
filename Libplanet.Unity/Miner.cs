@@ -47,7 +47,7 @@ namespace Libplanet.Unity
         {
             while (true)
             {
-                yield return new WaitUntil(() => swarm.PreloadTask_ended);
+                yield return new WaitUntil(() => swarm.IsPreloaded);
 
                 var task = Task.Run(async () => await Mine());
                 yield return new WaitUntil(() => task.IsCompleted);

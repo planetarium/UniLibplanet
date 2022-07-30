@@ -40,7 +40,7 @@ namespace Libplanet.Unity
         /// <summary>
         /// A flag for whether the swarmPreloadTask has completed.
         /// </summary>
-        public bool PreloadTask_ended { get; set; }
+        public bool IsPreloaded { get; set; }
 
         private PrivateKey PrivateKey { get; set; }
 
@@ -66,9 +66,9 @@ namespace Libplanet.Unity
 
             yield return new WaitUntil(() => bootstrapTask.IsCompleted);
 
-            if (!PreloadTask_ended)
+            if (!IsPreloaded)
             {
-                PreloadTask_ended = true;
+                IsPreloaded = true;
             }
 
             Debug.Log("PreloadingStarted event was invoked");
