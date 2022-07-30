@@ -2,13 +2,19 @@ Contributor guide
 =================
 
 # Setup
-First. [Submodule needs to be update](https://stackoverflow.com/questions/1030169/easy-way-to-pull-latest-of-all-git-submodules)
+First. Submodule needs to be update
 ```
 git submodule update --recursive
 ```
 
 You must run a script to **select a unity versions**. Now we recommend using the `2021.3.0f1` version.  
 Please run the scripts below in the root folder.
+
+If you never set execution policy on Powershell, your execution policy would be set `Restricted`, which is default execution policy for Windows client computers. 
+You need to change policy to execute Powershell scripts.
+```powershell
+Set-ExecutionPolicy RemoteSigned
+```
 
 ___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/PowerShell/PowerShell/issues/17322)___
 ```
