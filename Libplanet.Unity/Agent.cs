@@ -132,9 +132,18 @@ namespace Libplanet.Unity
 
         private void Start()
         {
+            _swarmRunner.IsPreloadedChanged += StartMiner;
             _swarmRunnerCo = StartCoroutine(_swarmRunner.CoSwarmRunner());
-            _minerCo = StartCoroutine(_miner.CoStart(_swarmRunner));
             _processActionsCo = StartCoroutine(_actionWorker.CoProcessActions());
+        }
+
+        /// <summary>
+        /// EventHandler wether IsPreloaded changed.
+        /// </summary>
+        private void StartMiner()
+        {
+            Debug.Log("Triggered IsPreloadedChanged : Start Miner");
+            _minerCo = StartCoroutine(_miner.CoStart());
         }
 
         private void OnApplicationQuit()
