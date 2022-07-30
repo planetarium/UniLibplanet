@@ -37,6 +37,11 @@ namespace Libplanet.Unity
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
+        /// <summary>
+        /// A flag for whether the swarmPreloadTask has completed.
+        /// </summary>
+        public bool PreloadTask_ended { get; set; }
+
         private PrivateKey PrivateKey { get; set; }
 
         /// <summary>
@@ -60,6 +65,11 @@ namespace Libplanet.Unity
             });
 
             yield return new WaitUntil(() => bootstrapTask.IsCompleted);
+
+            if (!PreloadTask_ended)
+            {
+                PreloadTask_ended = true;
+            }
 
             Debug.Log("PreloadingStarted event was invoked");
 

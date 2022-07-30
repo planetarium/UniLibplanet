@@ -41,11 +41,14 @@ namespace Libplanet.Unity
         /// <summary>
         /// Processes mining and wait.
         /// </summary>
+        /// <param name="swarm">The <see cref="SwarmRunner"/> to check for preload. </param>
         /// <returns>Mining Coroutine.</returns>
-        public IEnumerator CoStart()
+        public IEnumerator CoStart(SwarmRunner swarm)
         {
             while (true)
             {
+                yield return new WaitUntil(() => swarm.PreloadTask_ended);
+
                 var task = Task.Run(async () => await Mine());
                 yield return new WaitUntil(() => task.IsCompleted);
 
