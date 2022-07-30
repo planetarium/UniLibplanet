@@ -38,19 +38,14 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
-        /// EventHandler checked if IsPreloaded has changed.
+        /// EventHandler for Preloaded event.
         /// </summary>
-        public delegate void EventHandler();
+        public delegate void PreloadedEventHandler();
 
         /// <summary>
-        /// Event checked if IsPreloaded has changed.
+        /// Event checked if Preloaded has completed.
         /// </summary>
-        public event EventHandler? IsPreloadedChanged;
-
-        /// <summary>
-        /// A flag for whether the swarmPreloadTask has completed.
-        /// </summary>
-        public bool IsPreloaded { get; set; }
+        public event PreloadedEventHandler? Preloaded;
 
         private PrivateKey PrivateKey { get; set; }
 
@@ -91,12 +86,8 @@ namespace Libplanet.Unity
             });
 
             yield return new WaitUntil(() => swarmPreloadTask.IsCompleted);
-            if (!IsPreloaded)
-            {
-                IsPreloaded = true;
-                Debug.Log("PreloadTask Completed");
-                IsPreloadedChanged?.Invoke();
-            }
+
+            Preloaded?.Invoke();
 
             DateTimeOffset ended = DateTimeOffset.UtcNow;
 
