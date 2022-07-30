@@ -66,11 +66,6 @@ namespace Libplanet.Unity
 
             yield return new WaitUntil(() => bootstrapTask.IsCompleted);
 
-            if (!IsPreloaded)
-            {
-                IsPreloaded = true;
-            }
-
             Debug.Log("PreloadingStarted event was invoked");
 
             DateTimeOffset started = DateTimeOffset.UtcNow;
@@ -86,6 +81,11 @@ namespace Libplanet.Unity
             });
 
             yield return new WaitUntil(() => swarmPreloadTask.IsCompleted);
+            if (!IsPreloaded)
+            {
+                IsPreloaded = true;
+            }
+
             DateTimeOffset ended = DateTimeOffset.UtcNow;
 
             if (swarmPreloadTask.Exception is Exception exc)
