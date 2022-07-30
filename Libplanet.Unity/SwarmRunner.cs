@@ -38,6 +38,16 @@ namespace Libplanet.Unity
         }
 
         /// <summary>
+        /// EventHandler checked if IsPreloaded has changed.
+        /// </summary>
+        public delegate void EventHandler();
+
+        /// <summary>
+        /// Event checked if IsPreloaded has changed.
+        /// </summary>
+        public event EventHandler? IsPreloadedChanged;
+
+        /// <summary>
         /// A flag for whether the swarmPreloadTask has completed.
         /// </summary>
         public bool IsPreloaded { get; set; }
@@ -84,6 +94,8 @@ namespace Libplanet.Unity
             if (!IsPreloaded)
             {
                 IsPreloaded = true;
+                Debug.Log("PreloadTask Completed");
+                IsPreloadedChanged?.Invoke();
             }
 
             DateTimeOffset ended = DateTimeOffset.UtcNow;
