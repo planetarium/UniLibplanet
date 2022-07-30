@@ -37,6 +37,11 @@ namespace Libplanet.Unity
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
+        /// <summary>
+        /// A flag for whether the swarmPreloadTask has completed.
+        /// </summary>
+        public bool IsPreloaded { get; set; }
+
         private PrivateKey PrivateKey { get; set; }
 
         /// <summary>
@@ -76,6 +81,11 @@ namespace Libplanet.Unity
             });
 
             yield return new WaitUntil(() => swarmPreloadTask.IsCompleted);
+            if (!IsPreloaded)
+            {
+                IsPreloaded = true;
+            }
+
             DateTimeOffset ended = DateTimeOffset.UtcNow;
 
             if (swarmPreloadTask.Exception is Exception exc)

@@ -133,7 +133,7 @@ namespace Libplanet.Unity
         private void Start()
         {
             _swarmRunnerCo = StartCoroutine(_swarmRunner.CoSwarmRunner());
-            _minerCo = StartCoroutine(_miner.CoStart());
+            _minerCo = StartCoroutine(_miner.CoStart(_swarmRunner));
             _processActionsCo = StartCoroutine(_actionWorker.CoProcessActions());
         }
 
