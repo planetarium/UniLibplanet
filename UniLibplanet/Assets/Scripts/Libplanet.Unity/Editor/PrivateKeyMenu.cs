@@ -101,6 +101,33 @@ namespace Libplanet.Unity.Editor
         }
 
         /// <summary>
+        /// Show private key info.
+        /// </summary>
+        [MenuItem("Tools/Libplanet/Private key/Show private key info")]
+        public static void ShowPrivateKeyInfo()
+        {
+            const string title = "Show private key info";
+            string path = Paths.PrivateKeyPath;
+
+            if (File.Exists(path))
+            {
+                PrivateKey privateKey = Utils.LoadPrivateKey(path);
+                
+                string addressStr = privateKey.ToAddress().ToString();
+                string publicKeyStr = privateKey.PublicKey.ToString();
+                
+                string dialogContent =
+                    $"Address: {addressStr} \nPublic Key: {publicKeyStr}";
+                    
+                EditorUtility.DisplayDialog(title, dialogContent, "Close");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog(title, "Private key not found.", "Close");
+            }
+        }
+
+        /// <summary>
         /// Open the temp private keys file location.
         /// </summary>
         [MenuItem("Tools/Libplanet/Private key/Open temp private keys file location")]
