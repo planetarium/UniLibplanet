@@ -17,21 +17,26 @@ Set-ExecutionPolicy RemoteSigned
 ```
 
 ___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/PowerShell/PowerShell/issues/17322)___
-```
-# PowerShell
-.\scripts\create-dotenv.ps1
 
-# Bash
+PowerShell
+```
+.\scripts\create-dotenv.ps1
+```
+
+Bash
+```
 Sorry, we're getting ready.
 ```
 
 And we need to proceed with the build for the Unity development environment.  
 
+PowerShell
 ```
-# PowerShell
 .\scripts\build.ps1
+```
 
-# Bash
+Bash
+```
 Sorry, we're getting ready.
 ```
 
@@ -44,10 +49,12 @@ We have already build during the above Setup stage.
 When you run the build, you install `libplanet` dependencies and pack them into SDKs. (See [build.ps1](./scripts/build.ps1) for more information.)  
 The `.unitypackage` file created in the [out/](./out/) directory.
 
+PowerShell
 ```
-# PowerShell
 .\scripts\build.ps1
+```
 
-# Bash
+Bash
+```
 Sorry, we're getting ready.
 ```
