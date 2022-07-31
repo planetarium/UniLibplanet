@@ -14,7 +14,8 @@ ___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/Po
 ```
 # PowerShell
 .\scripts\create-dotenv.ps1
-
+```
+```
 # Bash
 Sorry, we're getting ready.
 ```
@@ -24,7 +25,8 @@ And we need to proceed with the build for the Unity development environment.
 ```
 # PowerShell
 .\scripts\build.ps1
-
+```
+```
 # Bash
 Sorry, we're getting ready.
 ```
@@ -41,7 +43,8 @@ The `.unitypackage` file created in the [out/](./out/) directory.
 ```
 # PowerShell
 .\scripts\build.ps1
-
+```
+```
 # Bash
 Sorry, we're getting ready.
 ```
