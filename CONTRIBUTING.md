@@ -11,10 +11,12 @@ You must run a script to **select a unity versions**. Now we recommend using the
 Please run the scripts below in the root folder.
 
 ___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/PowerShell/PowerShell/issues/17322)___
+
 PowerShell
 ```
 .\scripts\create-dotenv.ps1
 ```
+
 Bash
 ```
 Sorry, we're getting ready.
@@ -26,6 +28,7 @@ PowerShell
 ```
 .\scripts\build.ps1
 ```
+
 Bash
 ```
 Sorry, we're getting ready.
@@ -44,6 +47,7 @@ PowerShell
 ```
 .\scripts\build.ps1
 ```
+
 Bash
 ```
 Sorry, we're getting ready.
