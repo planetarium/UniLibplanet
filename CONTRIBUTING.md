@@ -2,9 +2,9 @@ Contributor guide
 =================
 
 # Setup
-First. Submodule needs to be update
+First. Submodule needs to be updated
 ```
-git submodule update --recursive
+git submodule update --init --recursive
 ```
 
 You must run a script to **select a unity versions**. Now we recommend using the `2021.3.0f1` version.  
