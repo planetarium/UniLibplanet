@@ -56,7 +56,10 @@ namespace Libplanet.Unity
                 }
                 else
                 {
-                    Debug.Log("Failed to create block");
+                    foreach (var ex in task.Exception.InnerExceptions)
+                    {
+                        Debug.LogException(ex);
+                    }
                 }
             }
         }
@@ -68,10 +71,6 @@ namespace Libplanet.Unity
         public async Task<Block<PolymorphicAction<ActionBase>>> Mine()
         {
             var block = await _swarm.BlockChain.MineBlock(_privateKey);
-            if (_swarm.Running)
-            {
-                _swarm.BroadcastBlock(block);
-            }
 
             return block;
         }
