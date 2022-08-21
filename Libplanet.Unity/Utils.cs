@@ -4,7 +4,6 @@ using Libplanet.Blocks;
 using Libplanet.Crypto;
 using Libplanet.Node;
 using Libplanet.Store;
-using Libplanet.Unity;
 
 namespace Libplanet.Unity
 {

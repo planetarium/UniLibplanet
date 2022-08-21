@@ -2,30 +2,41 @@ Contributor guide
 =================
 
 # Setup
-First. [Submodule needs to be update](https://stackoverflow.com/questions/1030169/easy-way-to-pull-latest-of-all-git-submodules)
+First. Submodule needs to be updated
 ```
-git submodule update --recursive
+git submodule update --init --recursive
 ```
 
 You must run a script to **select a unity versions**. Now we recommend using the `2021.3.0f1` version.  
 Please run the scripts below in the root folder.
 
-___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/PowerShell/PowerShell/issues/17322)___
+If you never set execution policy on Powershell, your execution policy would be set `Restricted`, which is default execution policy for Windows client computers. 
+You need to change policy to execute Powershell scripts.
+```powershell
+Set-ExecutionPolicy RemoteSigned
 ```
-# PowerShell
-.\scripts\create-dotenv.ps1
 
-# Bash
+___if you use PowerShell 7.2.x versions check this [Issue](https://github.com/PowerShell/PowerShell/issues/17322)___
+
+PowerShell
+```
+.\scripts\create-dotenv.ps1
+```
+
+Bash
+```
 Sorry, we're getting ready.
 ```
 
 And we need to proceed with the build for the Unity development environment.  
 
+PowerShell
 ```
-# PowerShell
 .\scripts\build.ps1
+```
 
-# Bash
+Bash
+```
 Sorry, we're getting ready.
 ```
 
@@ -38,10 +49,12 @@ We have already build during the above Setup stage.
 When you run the build, you install `libplanet` dependencies and pack them into SDKs. (See [build.ps1](./scripts/build.ps1) for more information.)  
 The `.unitypackage` file created in the [out/](./out/) directory.
 
+PowerShell
 ```
-# PowerShell
 .\scripts\build.ps1
+```
 
-# Bash
+Bash
+```
 Sorry, we're getting ready.
 ```

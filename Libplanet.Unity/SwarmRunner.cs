@@ -37,6 +37,16 @@ namespace Libplanet.Unity
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
+        /// <summary>
+        /// EventHandler for Preloaded event.
+        /// </summary>
+        public delegate void PreloadedEventHandler();
+
+        /// <summary>
+        /// Event checked if Preloaded has completed.
+        /// </summary>
+        public event PreloadedEventHandler? Preloaded;
+
         private PrivateKey PrivateKey { get; set; }
 
         /// <summary>
@@ -76,6 +86,9 @@ namespace Libplanet.Unity
             });
 
             yield return new WaitUntil(() => swarmPreloadTask.IsCompleted);
+
+            Preloaded?.Invoke();
+
             DateTimeOffset ended = DateTimeOffset.UtcNow;
 
             if (swarmPreloadTask.Exception is Exception exc)
