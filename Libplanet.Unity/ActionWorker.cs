@@ -65,7 +65,7 @@ namespace Libplanet.Unity
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error ocurred in MakeTransaction task: {e}");
+                Debug.LogError($"Error occurred in MakeTransaction task: {e}");
                 throw e;
             }
         }
