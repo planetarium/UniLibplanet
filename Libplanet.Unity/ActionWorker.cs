@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -49,13 +50,24 @@ namespace Libplanet.Unity
         /// to include in a newly created <see cref="Transaction{T}"/>.</param>
         public void MakeTransaction(IEnumerable<PolymorphicAction<ActionBase>> actions)
         {
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 Debug.LogFormat(
                     "Make Transaction with Actions: {0}",
                     string.Join(", ", actions.Select(i => i.InnerAction)));
                 _swarm.BlockChain.MakeTransaction(PrivateKey, actions.ToList());
             });
+
+            
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error occurred in MakeTransaction task: {e}");
+                throw e;
+            }
         }
 
         /// <summary>
