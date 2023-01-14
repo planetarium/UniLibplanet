@@ -58,7 +58,6 @@ namespace Libplanet.Unity
                 _swarm.BlockChain.MakeTransaction(PrivateKey, actions.ToList());
             });
 
-            
             try
             {
                 task.Wait();
@@ -66,7 +65,7 @@ namespace Libplanet.Unity
             catch (Exception e)
             {
                 Debug.LogError($"Error occurred in MakeTransaction task: {e}");
-                throw e;
+                throw;
             }
         }
 
