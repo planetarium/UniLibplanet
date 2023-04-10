@@ -23,7 +23,7 @@ Unity Editor window to show up.
 
 Download the latest [UniLibplanet.unitypackage][UniLibplanet releases] from
 the [UniLibplanet] [GitHub] repository.  From Unity Editor,
-select `Assets` → `Import Package` → `Custom Pakcage` from the top menu
+select `Assets` → `Import Package` → `Custom Package` from the top menu
 and select the downloaded [UniLibplanet.unitypackage] file.  Confirm with
 `Import` to import everything.
 
